@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_item_tambah_absen"
+        android:icon="@drawable/ic_assignment_white_18dp"
+        android:title="@string/absen"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_item_konfirmasi_hapus_murid"
+        android:icon="@drawable/ic_delete_white_24dp"
+        android:title="@string/konfirmasi_delete"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_item_tambah_murid"
+        android:title="@string/tambah_murid" />
+
+    <item
+        android:id="@+id/menu_item_hapus_murid"
+        android:title="@string/hapus_murid" />
+
+    <item
+        android:id="@+id/menu_item_hapus_sekolah"
+        android:title="@string/hapus_sekolah" />
+
+    <item
+        android:id="@+id/menu_item_export_xls"
+        android:title="@string/export_xls" />
+
+    <item
+        android:id="@+id/menu_item_hapus_absen"
+        android:title="@string/clear" />
+
+</menu>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/view_item_form"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="8dp"
+    android:background="@android:color/white"
+    android:elevation="8dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_item_form_heading"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/colorPrimaryDark"
+        android:gravity="center_vertical"
+        android:paddingEnd="@dimen/standar"
+        android:paddingLeft="@dimen/standar"
+        android:paddingRight="@dimen/standar"
+        android:paddingStart="@dimen/standar"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        tools:text="Murid ke-1" />
+
+    <TextView
+        android:id="@+id/tv_item_form_label_nama"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/et_item_form_nama_murid"
+        android:layout_below="@id/tv_item_form_heading"
+        android:layout_marginLeft="@dimen/standar"
+        android:layout_marginStart="@dimen/standar"
+        android:text="@string/form_nama_murid"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/et_item_form_nama_murid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/tv_item_form_heading"
+        android:layout_marginEnd="@dimen/standar"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="@dimen/standar"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@id/tv_item_form_label_nama"
+        android:layout_toRightOf="@id/tv_item_form_label_nama"
+        android:hint="@string/nama_murid" />
+
+    <TextView
+        android:id="@+id/tv_item_form_label_kelas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/et_item_form_kelas_murid"
+        android:layout_alignLeft="@id/tv_item_form_label_nama"
+        android:layout_alignStart="@id/tv_item_form_label_nama"
+        android:layout_below="@id/tv_item_form_label_nama"
+        android:text="@string/form_kelas_murid"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/et_item_form_kelas_murid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/et_item_form_nama_murid"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignStart="@id/et_item_form_nama_murid"
+        android:layout_below="@id/et_item_form_nama_murid"
+        android:layout_marginEnd="@dimen/standar"
+        android:layout_marginRight="@dimen/standar"
+        android:layout_toEndOf="@id/tv_item_form_label_kelas"
+        android:layout_toRightOf="@id/tv_item_form_label_kelas"
+        android:hint="@string/kelas_murid" />
+
+</RelativeLayout>

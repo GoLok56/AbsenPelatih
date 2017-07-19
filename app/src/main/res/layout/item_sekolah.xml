@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:selectableItemBackground"
+    android:orientation="horizontal"
+    android:padding="@dimen/standar">
+
+    <TextView
+        android:id="@+id/tv_item_sekolah_id_sekolah"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tv_item_sekolah_jumlah_murid"
+        android:layout_alignTop="@+id/tv_item_sekolah_nama_sekolah"
+        android:gravity="center"
+        android:textSize="20sp"
+        tools:text="1" />
+
+    <TextView
+        android:id="@+id/tv_item_sekolah_nama_sekolah"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@id/tv_item_sekolah_id_sekolah"
+        android:layout_toRightOf="@id/tv_item_sekolah_id_sekolah"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="SMAN 1 Cibinong" />
+
+
+    <TextView
+        android:id="@+id/tv_item_sekolah_jumlah_murid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tv_item_sekolah_nama_sekolah"
+        android:layout_alignStart="@id/tv_item_sekolah_nama_sekolah"
+        android:layout_below="@id/tv_item_sekolah_nama_sekolah"
+        tools:text="Jumlah Murid: 20" />
+
+
+</RelativeLayout>

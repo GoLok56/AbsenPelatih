@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_item_export_to_xls_with_school_data"
+        android:title="@string/export_xls" />
+
+    <item
+        android:id="@+id/menu_item_clear_all"
+        android:title="@string/clear" />
+
+</menu>

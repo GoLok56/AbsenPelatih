@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/standar">
+
+
+    <TextView
+        android:id="@+id/tv_item_absen_nama_murid"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Nur Ilahi" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@color/colorPrimaryDark" />
+
+    <RadioGroup
+        android:id="@+id/rg_item_absen"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_item_attendance_check_attend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hadir" />
+
+        <RadioButton
+            android:id="@+id/rb_item_attendance_check_not_attend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/tidak_hadir" />
+
+    </RadioGroup>
+
+</LinearLayout>

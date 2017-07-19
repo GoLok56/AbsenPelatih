@@ -1,0 +1,40 @@
+<resources>
+
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="login_pelatih">LOGIN PELATIH</string>
+
+    <string name="sekolah_not_found">Data sekolah tidak ditemukan!</string>
+    <string name="murid_not_found">Belum ada murid, tekan tombol untuk menambah murid!</string>
+
+    <string name="input_nama_sekolah">Masukkan Nama Sekolah</string>
+    <string name="nama_sekolah">Nama Sekolah</string>
+
+    <string name="input_jumlah_murid">Pilih Jumlah Murid</string>
+
+    <string name="form_nama_murid">Nama </string>
+    <string name="form_kelas_murid">Kelas </string>
+
+    <string name="app_name">Aplikasi Absen</string>
+
+    <string name="nama_murid">Nama Murid</string>
+    <string name="kelas_murid">Kelas Murid</string>
+
+    <string name="cari">Cari</string>
+    <string name="hadir">Hadir</string>
+    <string name="tidak_hadir">Tidak Hadir</string>
+    <string name="izin">Izin</string>
+
+    <!-- Button String -->
+    <string name="hapus_sekolah">Hapus Sekolah</string>
+    <string name="tambah_murid">Tambah Murid</string>
+    <string name="kirim_absen">Simpan</string>
+    <string name="tambah">Tambah</string>
+    <string name="hapus_murid">Hapus Murid</string>
+    <string name="konfirmasi_delete">DEL</string>
+    <string name="export_xls">Export .XLS</string>
+    <string name="clear">Clear</string>
+    <string name="absen">Absen</string>
+
+</resources>
