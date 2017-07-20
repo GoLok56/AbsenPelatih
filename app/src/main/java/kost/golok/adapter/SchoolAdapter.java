@@ -14,9 +14,9 @@ import kost.golok.absenpelatih.R;
 import kost.golok.object.School;
 import kost.golok.utility.Component;
 
-public class SekolahAdapter extends ArrayAdapter<School> {
+public class SchoolAdapter extends ArrayAdapter<School> {
 
-    public SekolahAdapter(Context context, ArrayList<School> school) {
+    public SchoolAdapter(Context context, ArrayList<School> school) {
         super(context, 0, school);
     }
 
@@ -41,7 +41,7 @@ public class SekolahAdapter extends ArrayAdapter<School> {
         SparseArrayCompat<String> data = new SparseArrayCompat<>();
         data.put(R.id.tv_item_sekolah_id_sekolah, "" + pos);
         data.put(R.id.tv_item_sekolah_nama_sekolah, school.getSchoolName());
-        data.put(R.id.tv_item_sekolah_jumlah_murid, "Jumlah Murid: " + school.jumlahMurid());
+        data.put(R.id.tv_item_sekolah_jumlah_murid, "Jumlah Murid: " + school.totalStudents());
         return data;
     }
 

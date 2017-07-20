@@ -18,7 +18,7 @@
             android:text="@string/murid_not_found" />
 
         <Button
-            android:id="@+id/btn_activity_menu_sekolah_tambah_murid"
+            android:id="@+id/btn_activity_school_menu_add_students"
             style="@style/blue_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

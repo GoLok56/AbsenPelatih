@@ -2,9 +2,9 @@ package kost.golok.absenpelatih;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,14 +35,13 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
-import kost.golok.adapter.SekolahAdapter;
+import kost.golok.adapter.SchoolAdapter;
 import kost.golok.controller.AttendanceController;
 import kost.golok.controller.SchoolController;
 import kost.golok.object.School;
 import kost.golok.object.Student;
 import kost.golok.utility.Component;
-import kost.golok.utility.manager.IntentManager;
-import kost.golok.utility.manager.PreferenceManager;
+import kost.golok.utility.Vocab;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,38 +87,43 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
         mSchoolController = new SchoolController(this);
-
         // Create a dialog when the floating button is clicked
-        FloatingActionButton fabCreate = (FloatingActionButton) findViewById(R.id.fab_main_menu_tambah_sekolah);
-        fabCreate.setOnClickListener(v -> createDialog());
-
+        FloatingActionButton fabCreate = (FloatingActionButton) findViewById(R.id.fab_main_menu_add_school);
+        fabCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                @SuppressLint("InflateParams")
+                final View view = MainActivity.this.getLayoutInflater().inflate(R.layout.dialog_add_school, null);
+                new AlertDialog.Builder(MainActivity.this).setView(view)
+                        .setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String schoolName = Component.getText(view, R.id.et_dialog_add_school_schools_name);
+                                if (schoolName.isEmpty())
+                                    Toast.makeText(MainActivity.this, "Nama sekolah tidak boleh kosong!", Toast.LENGTH_SHORT).show();
+                                else {
+                                    // Inserting the new school with given name to database
+                                    if (mSchoolController.insert(new School(schoolName))) {
+                                        MainActivity.this.refreshView();
+                                        Toast.makeText(MainActivity.this, "Berhasil menambahkan " + schoolName, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(MainActivity.this, "Terjadi Kesalahan!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        })
+                        .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(MainActivity.this, "Penambahan sekolah dibatalkan!", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
         refreshView();
     }
-
-    private void createDialog(){
-        @SuppressLint("InflateParams")
-        final View view = getLayoutInflater().inflate(R.layout.dialog_tambah_sekolah, null);
-        new AlertDialog.Builder(this).setView(view)
-                .setPositiveButton("Simpan", (dialog, which) -> {
-                    String schoolName = Component.getText(view, R.id.et_dialog_tambah_sekolah_nama_sekolah);
-                    if (schoolName.isEmpty())
-                        Toast.makeText(this, "Nama sekolah tidak boleh kosong!", Toast.LENGTH_SHORT).show();
-                    else {
-                        // Inserting the new school with given name to database
-                        if (mSchoolController.insert(new School(schoolName))) {
-                            refreshView();
-                            Toast.makeText(this, "Berhasil menambahkan " + schoolName, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(this, "Terjadi Kesalahan!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .setNegativeButton("Batal", (dialog, which) ->
-                        Toast.makeText(this, "Penambahan sekolah dibatalkan!", Toast.LENGTH_SHORT).show())
-                .create()
-                .show();
-    }
-
     // Updating the school list and displaying the new updated list to screen
     private void refreshView(){
         // Retrieving the list from database
@@ -126,10 +131,13 @@ public class MainActivity extends AppCompatActivity {
         if (mSchoolList != null) {
             // Setting up the listview to display the school list
             ListView listView = (ListView) findViewById(R.id.lv_main_menu_school_list);
-            listView.setAdapter(new SekolahAdapter(this, mSchoolList));
-            listView.setOnItemClickListener((parent, view, position, id) -> {
-                School current = (School) parent.getItemAtPosition(position);
-                startActivity(MenuSekolahActivity.getIntent(this, current, false));
+            listView.setAdapter(new SchoolAdapter(this, mSchoolList));
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    School current = (School) parent.getItemAtPosition(position);
+                    startActivity(SchoolMenuActivity.getIntent(MainActivity.this, current, false));
+                }
             });
             listView.setVisibility(View.VISIBLE);
             TextView tv = (TextView) findViewById(R.id.tv_main_menu_school_not_found);
@@ -139,25 +147,32 @@ public class MainActivity extends AppCompatActivity {
 
     private void clearAll() {
         // Showing the comfirmation dialog and ask for password
-        EditText etPass = new EditText(this);
+        final EditText etPass = new EditText(this);
         etPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         new AlertDialog.Builder(this)
                 .setTitle("Masukkan password!")
                 .setView(etPass)
-                .setPositiveButton("Konfirmasi", (dialogInterface, id) -> {
-                    String password = etPass.getText().toString();
-                    if(password.equals(PreferenceManager.PASSWORD)){
-                        // Clear the attendance history from all school
-                        for (int i = 0, size = mSchoolList.size(); i < size; i++) {
-                            mSchoolController.clear(mSchoolList.get(i).getSchoolName().replaceAll("\\s", ""));
+                .setPositiveButton("Konfirmasi", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int id) {
+                        String password = etPass.getText().toString();
+                        if (password.equals(Vocab.PASSWORD)) {
+                            // Clear the attendance history from all school
+                            for (int i = 0, size = mSchoolList.size(); i < size; i++) {
+                                mSchoolController.clear(mSchoolList.get(i).getSchoolName().replaceAll("\\s", ""));
+                            }
+                            Toast.makeText(MainActivity.this, "Berhasil menghapus semua absen!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Password yang dimasukkan salah!", Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(this, "Berhasil menghapus semua absen!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "Password yang dimasukkan salah!", Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Batal", (dialogInterface, i) ->
-                        Toast.makeText(this, "Batal menghapus!", Toast.LENGTH_SHORT).show())
+                .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(MainActivity.this, "Batal menghapus!", Toast.LENGTH_SHORT).show();
+                    }
+                })
                 .create()
                 .show();
     }
@@ -223,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
                             ArrayList<Student> students = currentSchool.getStudents();
                             int attendanceTotal = 0;
                             for(int k = 0, size = students.size(); k < size; k++){
-                                attendanceTotal += students.get(k).getJumlahKehadiran();
+                                attendanceTotal += students.get(k).getTotalAttendance();
                             }
                             cell.setCellValue(String.valueOf(attendanceTotal));
                         }
@@ -263,12 +278,9 @@ public class MainActivity extends AppCompatActivity {
         cell.setCellValue(value);
     }
 
-    static Intent getIntent(Context context, Parcelable sekolah, boolean finish) {
-        Intent intent = new Intent(context, MenuSekolahActivity.class);
-        intent.putExtra(IntentManager.SCHOOL_EXTRA, sekolah);
-        if (finish) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        }
+    static Intent getIntent(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return intent;
     }
 

@@ -50,7 +50,7 @@ public class School implements Parcelable {
         mStudent.remove(studentApus);
     }
 
-    public int jumlahMurid(){
+    public int totalStudents(){
         return mStudent.size();
     }
 
@@ -65,7 +65,7 @@ public class School implements Parcelable {
     public int getTotalKehadiran(){
         int total = 0;
         for (Student student : mStudent) {
-            total += student.getJumlahKehadiran();
+            total += student.getTotalAttendance();
         }
         return total;
     }

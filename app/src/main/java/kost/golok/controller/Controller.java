@@ -27,6 +27,9 @@ abstract class Controller<T> {
     // Clearing the database
     public abstract void clear(String name);
 
+    // Delete a row from database
+    public abstract boolean delete(T obj);
+
     // Insert the given data to database
     public abstract boolean insert(T obj);
 

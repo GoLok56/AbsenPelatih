@@ -18,7 +18,7 @@
         android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_main_menu_tambah_sekolah"
+        android:id="@+id/fab_main_menu_add_school"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

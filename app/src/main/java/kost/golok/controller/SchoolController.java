@@ -3,7 +3,6 @@ package kost.golok.controller;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 
@@ -60,4 +59,20 @@ public class SchoolController extends Controller<School> {
         mDb.delete(namaTable, null, null);
     }
 
+    @Override
+    public boolean delete(School school) {
+        String[] selectionArgs = { String.valueOf(school.getId()) };
+        if(mDb.delete(DBSchema.School.TABLE_NAME, "_id=?", selectionArgs) != 0){
+            String sql = "DROP TABLE IF EXISTS ";
+            String schoolName = school.getSchoolName().replaceAll("\\s", "");
+            String studentTable = DBSchema.Student.TABLE_NAME + schoolName;
+            String attendanceTable = DBSchema.Attendance.TABLE_NAME + schoolName;
+
+            mDb.execSQL(sql + studentTable + ";");
+            mDb.execSQL(sql + attendanceTable + ";");
+
+            return true;
+        }
+        return false;
+    }
 }

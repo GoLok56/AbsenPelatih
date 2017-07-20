@@ -8,7 +8,7 @@
     tools:context="kost.golok.absenpelatih.AttendanceCheckActivity">
 
     <Button
-        android:id="@+id/btn_absen_attendance_submit"
+        android:id="@+id/btn_attendance_submit"
         style="@style/blue_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,15 +22,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@id/btn_absen_attendance_submit"
-        android:layout_toStartOf="@id/btn_absen_attendance_submit"
+        android:layout_toLeftOf="@id/btn_attendance_submit"
+        android:layout_toStartOf="@id/btn_attendance_submit"
         android:hint="@string/cari" />
 
     <ListView
         android:id="@+id/lv_student_attendance_check"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/btn_absen_attendance_submit"
+        android:layout_below="@id/btn_attendance_submit"
         android:layout_marginTop="16dp" />
 
 </RelativeLayout>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -17,10 +18,10 @@ import kost.golok.database.DBManager;
 import kost.golok.object.Student;
 import kost.golok.object.School;
 import kost.golok.utility.Component;
-import kost.golok.utility.manager.IntentManager;
+import kost.golok.utility.Vocab;
 
 
-public class TambahMuridActivity extends AppCompatActivity {
+public class AddStudentActivity extends AppCompatActivity {
 
     private int mJumlahMurid;
     private LinearLayout mParentView;
@@ -35,7 +36,7 @@ public class TambahMuridActivity extends AppCompatActivity {
     }
 
     private void init(){
-        mJumlahMurid = getIntent().getIntExtra(IntentManager.EXTRA_NILAI_NUMBER_PICKER, 1);
+        mJumlahMurid = getIntent().getIntExtra(Vocab.NUMBER_PICKER_VALUE_EXTRA, 1);
         mParentView = (LinearLayout) findViewById(R.id.view_tambah_murid_list_form);
         mDb = DBManager.getInstance(this);
         setListView();
@@ -45,29 +46,29 @@ public class TambahMuridActivity extends AppCompatActivity {
     private void setButton(){
         Button btn = (Button) findViewById(R.id.btn_tambah_murid);
 
-        btn.setOnClickListener(v -> {
-            if(emptyEditTextExist()){
-                Toast.makeText(this, "Tidak boleh ada field yang kosong!", Toast.LENGTH_SHORT).show();
-            } else {
-                School school = getIntent().getParcelableExtra(IntentManager.SCHOOL_EXTRA);
-                int count = 0;
-                for(int i = 0; i < mJumlahMurid; i++){
-                    View view = mParentView.getChildAt(i);
-                    String namaMurid = Component.getValue(view, R.id.et_item_form_nama_murid);
-                    String kelasMurid = Component.getValue(view, R.id.et_item_form_kelas_murid);
-                    Student student = new Student(namaMurid, kelasMurid);
-                    int id = mDb.insert(student, school.getSchoolName());
-                    if(id != -1){
-                        student.setId(id);
-                        school.add(student);
-                        count++;
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (emptyEditTextExist()) {
+                    Toast.makeText(AddStudentActivity.this, "Tidak boleh ada field yang kosong!", Toast.LENGTH_SHORT).show();
+                } else {
+                    School school = AddStudentActivity.this.getIntent().getParcelableExtra(Vocab.SCHOOL_EXTRA);
+                    int count = 0;
+                    for (int i = 0; i < mJumlahMurid; i++) {
+                        View view = mParentView.getChildAt(i);
+                        String namaMurid = Component.getValue(view, R.id.et_item_form_nama_murid);
+                        String kelasMurid = Component.getValue(view, R.id.et_item_form_kelas_murid);
+                        Student student = new Student(namaMurid, kelasMurid);
+                        int id = mDb.insert(student, school.getSchoolName());
+                        if (id != -1) {
+                            student.setId(id);
+                            school.add(student);
+                            count++;
+                        }
                     }
+                    Toast.makeText(AddStudentActivity.this, "Berhasil menambahkan sejumlah " + count + " murid!", Toast.LENGTH_SHORT).show();
+                    startActivity(SchoolMenuActivity.getIntent(AddStudentActivity.this, school, true));
                 }
-                Toast.makeText(this, "Berhasil menambahkan sejumlah " + count + " murid!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(this, MenuSekolahActivity.class);
-                intent.putExtra(IntentManager.SCHOOL_EXTRA, school);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
             }
         });
     }
@@ -104,6 +105,14 @@ public class TambahMuridActivity extends AppCompatActivity {
             }
             child.setLayoutParams(layoutParams);
         }
+    }
+
+    public static Intent getIntent(Context context, Parcelable school, int value){
+        Intent intent = new Intent(context, AddStudentActivity.class);
+        intent.putExtra(Vocab.NUMBER_PICKER_VALUE_EXTRA, value);
+        intent.putExtra(Vocab.SCHOOL_EXTRA, school);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        return intent;
     }
 
 }

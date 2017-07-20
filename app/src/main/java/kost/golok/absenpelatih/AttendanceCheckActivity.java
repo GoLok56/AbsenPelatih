@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -14,12 +15,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import kost.golok.adapter.AttendanceCheckAdapter;
+import kost.golok.adapter.AttendanceAdapter;
 import kost.golok.controller.AttendanceController;
 import kost.golok.controller.StudentController;
 import kost.golok.object.School;
 import kost.golok.object.Student;
-import kost.golok.utility.manager.IntentManager;
+import kost.golok.utility.Vocab;
 
 public class AttendanceCheckActivity extends AppCompatActivity {
 
@@ -37,56 +38,54 @@ public class AttendanceCheckActivity extends AppCompatActivity {
     }
 
     private void init(){
-        mSchool = getIntent().getParcelableExtra(IntentManager.SCHOOL_EXTRA);
+        mSchool = getIntent().getParcelableExtra(Vocab.SCHOOL_EXTRA);
         mStudentController = new StudentController(AttendanceCheckActivity.this, mSchool.getSchoolName());
-
         // Clearing the attended student list in case it is not empty and contain students
         // from another school
-        if(!AttendanceCheckAdapter.sAttendedStudent.isEmpty()){
-            AttendanceCheckAdapter.sAttendedStudent.clear();
+        if(!AttendanceAdapter.sSelectedStudents.isEmpty()){
+            AttendanceAdapter.sSelectedStudents.clear();
         }
-
         initView();
     }
 
     private void initView(){
         // Inflate the layout with students from mSchool
         ListView lv = (ListView) findViewById(R.id.lv_student_attendance_check);
-        lv.setAdapter(new AttendanceCheckAdapter(this, mSchool.getStudents()));
-
+        lv.setAdapter(new AttendanceAdapter(this, mSchool.getStudents()));
         // Setting the button's onclicklistener and edittext's ontextchangelistener
         setButton();
         setEditText(lv);
     }
 
     private void setButton(){
-        Button btn = (Button) findViewById(R.id.btn_absen_attendance_submit);
-        btn.setOnClickListener(view -> {
-            // Try to insert all the student's id in attended student list to database
-            AttendanceController attendanceController = new AttendanceController(this, mSchool.getSchoolName());
-            int error = 0;
-            for(int i = 0, size = AttendanceCheckAdapter.sAttendedStudent.size(); i < size; ++i){
-                if(attendanceController.insert(AttendanceCheckAdapter.sAttendedStudent.get(i).getId())){
-                    AttendanceCheckAdapter.sAttendedStudent.get(i).addJumlahKehadiran();
-                } else {
-                    error++;
+        Button btn = (Button) findViewById(R.id.btn_attendance_submit);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Try to insert all the student's id in attended student list to database
+                AttendanceController attendanceController = new AttendanceController(AttendanceCheckActivity.this, mSchool.getSchoolName());
+                int error = 0;
+                for (int i = 0, size = AttendanceAdapter.sSelectedStudents.size(); i < size; ++i) {
+                    if (attendanceController.insert(AttendanceAdapter.sSelectedStudents.get(i).getId())) {
+                        AttendanceAdapter.sSelectedStudents.get(i).addJumlahKehadiran();
+                    } else {
+                        error++;
+                    }
                 }
+                if (error > 0) {
+                    Toast.makeText(AttendanceCheckActivity.this, "Terjadi kesalahan! " + error + " murid gagal dimasukkan kedalam database.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AttendanceCheckActivity.this, "Behasil melakukan absen!", Toast.LENGTH_SHORT).show();
+                }
+                // Clear the attended student list as it not needed anymore
+                AttendanceAdapter.sSelectedStudents.clear();
+                AttendanceCheckActivity.this.startActivity(SchoolMenuActivity.getIntent(AttendanceCheckActivity.this, mSchool, true));
             }
-
-            if(error > 0){
-                Toast.makeText(this, "Terjadi kesalahan! " + error + " murid gagal dimasukkan kedalam database.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Behasil melakukan absen!", Toast.LENGTH_SHORT).show();
-            }
-
-            // Clear the attended student list as it not needed anymore
-            AttendanceCheckAdapter.sAttendedStudent.clear();
-            startActivity(MenuSekolahActivity.getIntent(AttendanceCheckActivity.this, mSchool, true));
         });
     }
 
-    private void setEditText(ListView lv){
-        EditText etSearch = (EditText) findViewById(R.id.et_absen_cari_murid);
+    private void setEditText(final ListView lv){
+        final EditText etSearch = (EditText) findViewById(R.id.et_absen_cari_murid);
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
@@ -100,14 +99,14 @@ public class AttendanceCheckActivity extends AppCompatActivity {
                 // Try to search the database for student with the given etSearch value
                 ArrayList<Student> students = mStudentController.getList(etSearch.getText().toString());
                 // Updating the screen with new list
-                lv.setAdapter(new AttendanceCheckAdapter(AttendanceCheckActivity.this, students));
+                lv.setAdapter(new AttendanceAdapter(AttendanceCheckActivity.this, students));
             }
         });
     }
 
     protected static Intent getIntent(Context context, Parcelable object) {
         Intent intent = new Intent(context, AttendanceCheckActivity.class);
-        intent.putExtra(IntentManager.SCHOOL_EXTRA, object);
+        intent.putExtra(Vocab.SCHOOL_EXTRA, object);
         return intent;
     }
 

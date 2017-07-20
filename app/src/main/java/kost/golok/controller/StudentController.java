@@ -59,12 +59,21 @@ public class StudentController extends Controller<Student> {
         mDb.delete(mTableName, null, null);
     }
 
+    @Override
+    public boolean delete(Student student) {
+        String[] selectionArgs = { String.valueOf(student.getId()) };
+        if(mDb.delete(mTableName, "_id=?", selectionArgs) != 0){
+            new AttendanceController(mDb, mSchoolName).delete(student.getId());
+            return true;
+        }
+        return false;
+    }
+
     private int getTotalAttendance(int idMurid){
         // Setting up the query
         String tableName = DBSchema.Attendance.TABLE_NAME + mSchoolName;
         String selection = DBSchema.Attendance.STUDENT_ID_COLUMN + "=?";
         String[] selectionArgs = { String.valueOf(idMurid) };
-
         // Read database with given query, the total row found is the total attendance of the student
         Cursor cursor = mDb.query(tableName, null, selection, selectionArgs, null, null, null);
         int totalAttendance = cursor.getCount();

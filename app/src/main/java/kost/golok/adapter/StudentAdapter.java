@@ -14,11 +14,11 @@ import kost.golok.absenpelatih.R;
 import kost.golok.object.Student;
 import kost.golok.utility.Component;
 
-public class MuridAdapter extends ArrayAdapter<Student> {
+public class StudentAdapter extends ArrayAdapter<Student> {
 
     private int mLayoutId;
 
-    public MuridAdapter(Context context, ArrayList<Student> sekolah, int id) {
+    public StudentAdapter(Context context, ArrayList<Student> sekolah, int id) {
         super(context, 0, sekolah);
         mLayoutId = id;
     }
@@ -42,9 +42,9 @@ public class MuridAdapter extends ArrayAdapter<Student> {
 
     private SparseArrayCompat<String> textViewMap(Student student){
         SparseArrayCompat<String> data = new SparseArrayCompat<>();
-        data.put(R.id.tv_item_murid_nama_murid, student.getNamaMurid());
+        data.put(R.id.tv_item_murid_nama_murid, student.getName());
         data.put(R.id.tv_item_murid_kelas, "Kelas " + student.getKelas());
-        data.put(R.id.tv_item_murid_jumlah_kehadiran_murid, "Jumlah kehadiran: " + student.getJumlahKehadiran());
+        data.put(R.id.tv_item_murid_jumlah_kehadiran_murid, "Jumlah kehadiran: " + student.getTotalAttendance());
         return data;
     }
 

@@ -49,11 +49,11 @@ public class Student implements Parcelable {
         this.mId = id;
     }
 
-    public int getJumlahKehadiran() {
+    public int getTotalAttendance() {
         return mJumlahKehadiran;
     }
 
-    public String getNamaMurid() {
+    public String getName() {
         return mNamaMurid;
     }
 

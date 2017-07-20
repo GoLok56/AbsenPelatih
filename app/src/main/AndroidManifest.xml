@@ -17,8 +17,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MenuSekolahActivity" />
-        <activity android:name=".TambahMuridActivity" />
+        <activity android:name=".SchoolMenuActivity" />
+        <activity android:name=".AddStudentActivity" />
         <activity android:name=".AttendanceCheckActivity" />
     </application>
 
