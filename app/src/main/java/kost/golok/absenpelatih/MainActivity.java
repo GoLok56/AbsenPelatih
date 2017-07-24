@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -72,7 +73,10 @@ public class MainActivity extends AppCompatActivity {
                 exportDB();
                 break;
             case R.id.menu_item_clear_all:
-                clearAll();
+                showDialogClearAll();
+                break;
+            case R.id.menu_item_change_password:
+                showDialogChangePassword();
                 break;
         }
         return true;
@@ -145,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void clearAll() {
+    private void showDialogClearAll() {
         // Showing the comfirmation dialog and ask for password
         final EditText etPass = new EditText(this);
         etPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -155,8 +159,10 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Konfirmasi", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
-                        String password = etPass.getText().toString();
-                        if (password.equals(Vocab.PASSWORD)) {
+                        String passToCheck = etPass.getText().toString();
+                        SharedPreferences pref = MainActivity.this.getSharedPreferences(Vocab.PREF_NAME, Context.MODE_PRIVATE);
+                        String password = pref.getString(Vocab.PASSWORD, Vocab.DEFAULT_PASSWORD);
+                        if (passToCheck.equals(password)) {
                             // Clear the attendance history from all school
                             for (int i = 0, size = mSchoolList.size(); i < size; i++) {
                                 mSchoolController.clear(mSchoolList.get(i).getSchoolName().replaceAll("\\s", ""));
@@ -171,6 +177,41 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Toast.makeText(MainActivity.this, "Batal menghapus!", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    private void showDialogChangePassword(){
+        @SuppressLint("InflateParams")
+        final View view = getLayoutInflater().inflate(R.layout.dialog_change_password, null);
+        new AlertDialog.Builder(this)
+                .setView(view)
+                .setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String oldPass = Component.getText(view, R.id.et_dialog_change_password_old_password);
+                        String newPass = Component.getText(view, R.id.et_dialog_change_password_new_password);
+                        if (oldPass.isEmpty() || newPass.isEmpty())
+                            Toast.makeText(MainActivity.this, "Tidak boleh ada form yang kosong!", Toast.LENGTH_SHORT).show();
+                        else {
+                            SharedPreferences pref = MainActivity.this.getSharedPreferences(Vocab.PREF_NAME, Context.MODE_PRIVATE);
+                            String savedPassword = pref.getString(Vocab.PASSWORD, Vocab.DEFAULT_PASSWORD);
+                            // Inserting the new school with given name to database
+                            if (oldPass.equals(savedPassword)) {
+                                pref.edit().putString(Vocab.PASSWORD, newPass).apply();
+                                Toast.makeText(MainActivity.this, "Berhasil mengganti password!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(MainActivity.this, "Password lama yang dimasukkan salah!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                })
+                .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(MainActivity.this, "Batal mengganti password!", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .create()

@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/menu_item_change_password"
+        android:title="@string/ganti_password" />
+
+    <item
         android:id="@+id/menu_item_export_to_xls_with_school_data"
         android:title="@string/export_xls" />
 

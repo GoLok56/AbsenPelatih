@@ -26,6 +26,10 @@
     <string name="tidak_hadir">Tidak Hadir</string>
     <string name="izin">Izin</string>
 
+    <string name="ganti_password">Ganti Password</string>
+    <string name="old_pass">Password Lama</string>
+    <string name="new_pass">Password Baru</string>
+
     <!-- Button String -->
     <string name="hapus_sekolah">Hapus Sekolah</string>
     <string name="tambah_murid">Tambah Murid</string>

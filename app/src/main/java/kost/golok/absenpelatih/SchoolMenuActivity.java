@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
@@ -104,7 +105,7 @@ public class SchoolMenuActivity extends AppCompatActivity {
                 exportDB();
                 break;
             case R.id.menu_item_clear_attendance_history:
-                clear();
+                showDialogClear();
                 break;
         }
         return true;
@@ -146,7 +147,7 @@ public class SchoolMenuActivity extends AppCompatActivity {
         StudentController.sSelectedStudents.clear();
     }
 
-    private void clear(){
+    private void showDialogClear(){
         // Showing the comfirmation dialog and ask for password
         final EditText etPass = new EditText(this);
         etPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -157,8 +158,10 @@ public class SchoolMenuActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // Comparing the password
-                        String password = etPass.getText().toString();
-                        if (password.equals(Vocab.PASSWORD)) {
+                        String passToCheck = etPass.getText().toString();
+                        SharedPreferences pref = SchoolMenuActivity.this.getSharedPreferences(Vocab.PREF_NAME, Context.MODE_PRIVATE);
+                        String password = pref.getString(Vocab.PASSWORD, Vocab.DEFAULT_PASSWORD);
+                        if (passToCheck.equals(password)) {
                             // Clearing the attendance history
                             mAttendanceController.clear("");
                             Toast.makeText(SchoolMenuActivity.this, "Berhasil menghapus absen!", Toast.LENGTH_SHORT).show();
