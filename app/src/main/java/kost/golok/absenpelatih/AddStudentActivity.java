@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -23,8 +22,13 @@ import kost.golok.utility.Vocab;
 
 public class AddStudentActivity extends AppCompatActivity {
 
-    private int mJumlahMurid;
+    // Total students to add
+    private int mTotalStudents;
+
+    // Parent to inflate
     private LinearLayout mParentView;
+
+
     private DBManager mDb;
 
 
@@ -36,17 +40,13 @@ public class AddStudentActivity extends AppCompatActivity {
     }
 
     private void init(){
-        mJumlahMurid = getIntent().getIntExtra(Vocab.NUMBER_PICKER_VALUE_EXTRA, 1);
+        mTotalStudents = getIntent().getIntExtra(Vocab.NUMBER_PICKER_VALUE_EXTRA, 1);
         mParentView = (LinearLayout) findViewById(R.id.view_tambah_murid_list_form);
         mDb = DBManager.getInstance(this);
         setListView();
-        setButton();
-    }
 
-    private void setButton(){
-        Button btn = (Button) findViewById(R.id.btn_tambah_murid);
-
-        btn.setOnClickListener(new View.OnClickListener() {
+        // Set the listener for the button
+        findViewById(R.id.btn_tambah_murid).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (emptyEditTextExist()) {
@@ -54,7 +54,7 @@ public class AddStudentActivity extends AppCompatActivity {
                 } else {
                     School school = AddStudentActivity.this.getIntent().getParcelableExtra(Vocab.SCHOOL_EXTRA);
                     int count = 0;
-                    for (int i = 0; i < mJumlahMurid; i++) {
+                    for (int i = 0; i < mTotalStudents; i++) {
                         View view = mParentView.getChildAt(i);
                         String namaMurid = Component.getValue(view, R.id.et_item_form_nama_murid);
                         String kelasMurid = Component.getValue(view, R.id.et_item_form_kelas_murid);
@@ -73,32 +73,39 @@ public class AddStudentActivity extends AppCompatActivity {
         });
     }
 
+    // Check if there any any forms that's empty
     private boolean emptyEditTextExist(){
-        for(int i = 0; i < mJumlahMurid; i++){
+        for(int i = 0; i < mTotalStudents; i++){
             View view = mParentView.getChildAt(i);
             String namaMurid = Component.getValue(view, R.id.et_item_form_nama_murid);
             String kelasMurid = Component.getValue(view, R.id.et_item_form_kelas_murid);
-            if(namaMurid.trim().isEmpty() || kelasMurid.trim().isEmpty())
+            if(namaMurid.trim().isEmpty() || kelasMurid.trim().isEmpty()) {
                 return true;
+            }
         }
         return false;
     }
 
+    // Creating the form as many as mTotalStudents
     private void setListView(){
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         int sizeInDP = 16;
 
+        // Converting the size to DP
         int marginInDp = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, sizeInDP, getResources()
-                        .getDisplayMetrics());
+                TypedValue.COMPLEX_UNIT_DIP,
+                sizeInDP,
+                getResources().getDisplayMetrics()
+        );
 
-        for(int i = 1; i <= mJumlahMurid; i++){
+        // Inflate the form
+        for(int i = 1; i <= mTotalStudents; i++){
             @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.item_form_murid, null);
             Component.setText(view, R.id.tv_item_form_heading, "Student ke-" + i);
             RelativeLayout child = (RelativeLayout) view.findViewById(R.id.view_item_form);
             mParentView.addView(child);
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) child.getLayoutParams();
-            if(i == mJumlahMurid){
+            if(i == mTotalStudents){
                 layoutParams.setMargins(marginInDp, marginInDp, marginInDp, marginInDp);
             } else {
                 layoutParams.setMargins(marginInDp, marginInDp, marginInDp, 0);
@@ -107,7 +114,8 @@ public class AddStudentActivity extends AppCompatActivity {
         }
     }
 
-    public static Intent getIntent(Context context, Parcelable school, int value){
+    // Get the intent and move to this activity
+    static Intent getIntent(Context context, Parcelable school, int value){
         Intent intent = new Intent(context, AddStudentActivity.class);
         intent.putExtra(Vocab.NUMBER_PICKER_VALUE_EXTRA, value);
         intent.putExtra(Vocab.SCHOOL_EXTRA, school);
