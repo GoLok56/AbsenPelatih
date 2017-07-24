@@ -1,5 +1,6 @@
 package kost.golok.controller;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +11,9 @@ import kost.golok.database.DBSchema;
 import kost.golok.object.Student;
 
 public class StudentController extends Controller<Student> {
+
+    // The list of students that selected for some change
+    public static final ArrayList<Student> sSelectedStudents = new ArrayList<>();
 
     // The database of school that the student is coming from
     private String mTableName;
@@ -50,8 +54,14 @@ public class StudentController extends Controller<Student> {
     }
 
     @Override
+    // Insert a new student to database
     public boolean insert(Student student) {
-        return false;
+        ContentValues values = new ContentValues();
+        values.put(DBSchema.Student.CLASS_COLUMN, student.getStudentClass());
+        values.put(DBSchema.Student.NAME_COLUMN, student.getName());
+        int id = (int) mDb.insert(mTableName, null, values);
+        student.setId(id);
+        return id != -1;
     }
 
     @Override
@@ -60,6 +70,7 @@ public class StudentController extends Controller<Student> {
     }
 
     @Override
+    // Delete a student from database
     public boolean delete(Student student) {
         String[] selectionArgs = { String.valueOf(student.getId()) };
         if(mDb.delete(mTableName, "_id=?", selectionArgs) != 0){
@@ -69,6 +80,7 @@ public class StudentController extends Controller<Student> {
         return false;
     }
 
+    // Retrieving the total attendance of a student with given id from database
     private int getTotalAttendance(int idMurid){
         // Setting up the query
         String tableName = DBSchema.Attendance.TABLE_NAME + mSchoolName;
@@ -82,8 +94,9 @@ public class StudentController extends Controller<Student> {
         return totalAttendance;
     }
 
+    // Change the school name of the controller with the new given value
     void setSchoolName(String schoolName) {
         mSchoolName = schoolName.replaceAll("\\s", "");
-        this.mTableName = DBSchema.Student.TABLE_NAME  + schoolName.replaceAll("\\s", "");
+        mTableName = DBSchema.Student.TABLE_NAME  + schoolName.replaceAll("\\s", "");
     }
 }

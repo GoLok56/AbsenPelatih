@@ -57,7 +57,7 @@ public class Student implements Parcelable {
         return mNamaMurid;
     }
 
-    public String getKelas() {
+    public String getStudentClass() {
         return mKelas;
     }
 

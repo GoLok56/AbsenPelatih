@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import kost.golok.adapter.AttendanceAdapter;
 import kost.golok.adapter.StudentAdapter;
 import kost.golok.controller.AttendanceController;
 import kost.golok.controller.SchoolController;
@@ -144,7 +143,7 @@ public class SchoolMenuActivity extends AppCompatActivity {
         mSchool = getIntent().getParcelableExtra(Vocab.SCHOOL_EXTRA);
         mSchoolName = mSchool.getSchoolName();
         mAttendanceController = new AttendanceController(this, mSchoolName);
-        AttendanceAdapter.sSelectedStudents.clear();
+        StudentController.sSelectedStudents.clear();
     }
 
     private void clear(){
@@ -237,8 +236,8 @@ public class SchoolMenuActivity extends AppCompatActivity {
         // Trying to delete all selected students
         boolean error = false;
         StudentController studentController = new StudentController(this, mSchoolName);
-        for(int i = 0, size = AttendanceAdapter.sSelectedStudents.size(); i < size; i++){
-            Student student = AttendanceAdapter.sSelectedStudents.get(i);
+        for(int i = 0, size = StudentController.sSelectedStudents.size(); i < size; i++){
+            Student student = StudentController.sSelectedStudents.get(i);
             if(studentController.delete(student)){
                 // Remove the student from the active school
                 mSchool.remove(student);
@@ -252,7 +251,7 @@ public class SchoolMenuActivity extends AppCompatActivity {
             Toast.makeText(this, "Terjadi beberapa kesalahan saat menghapus!", Toast.LENGTH_SHORT).show();
         }
         // Clear the selected students since it is no longer needed
-        AttendanceAdapter.sSelectedStudents.clear();
+        StudentController.sSelectedStudents.clear();
         // Refreshing the view
         startActivity(getIntent(this, mSchool, true));
     }
@@ -279,10 +278,10 @@ public class SchoolMenuActivity extends AppCompatActivity {
                         Student student = (Student) parent.getItemAtPosition(position);
                         CheckBox cb = (CheckBox) view.findViewById(R.id.cb_item_murid_delete_murid_selected);
                         cb.setChecked(!cb.isChecked());
-                        if (AttendanceAdapter.sSelectedStudents.contains(student)) {
-                            AttendanceAdapter.sSelectedStudents.remove(student);
+                        if (StudentController.sSelectedStudents.contains(student)) {
+                            StudentController.sSelectedStudents.remove(student);
                         } else {
-                            AttendanceAdapter.sSelectedStudents.add(student);
+                            StudentController.sSelectedStudents.add(student);
                         }
                     }
                 });

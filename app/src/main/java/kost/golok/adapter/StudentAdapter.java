@@ -43,7 +43,7 @@ public class StudentAdapter extends ArrayAdapter<Student> {
     private SparseArrayCompat<String> textViewMap(Student student){
         SparseArrayCompat<String> data = new SparseArrayCompat<>();
         data.put(R.id.tv_item_murid_nama_murid, student.getName());
-        data.put(R.id.tv_item_murid_kelas, "Kelas " + student.getKelas());
+        data.put(R.id.tv_item_murid_kelas, "Kelas " + student.getStudentClass());
         data.put(R.id.tv_item_murid_jumlah_kehadiran_murid, "Jumlah kehadiran: " + student.getTotalAttendance());
         return data;
     }

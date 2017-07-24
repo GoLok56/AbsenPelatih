@@ -11,12 +11,11 @@ import android.widget.RadioButton;
 import java.util.ArrayList;
 
 import kost.golok.absenpelatih.R;
+import kost.golok.controller.StudentController;
 import kost.golok.object.Student;
 import kost.golok.utility.Component;
 
 public class AttendanceAdapter extends ArrayAdapter<Student> {
-
-    public static ArrayList<Student> sSelectedStudents = new ArrayList<>();
 
     public AttendanceAdapter(Context context, ArrayList<Student> studentList) {
         super(context, 0, studentList);
@@ -39,7 +38,7 @@ public class AttendanceAdapter extends ArrayAdapter<Student> {
             rbAttend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    sSelectedStudents.add(currentStudent);
+                    StudentController.sSelectedStudents.add(currentStudent);
                 }
             });
 
@@ -48,12 +47,12 @@ public class AttendanceAdapter extends ArrayAdapter<Student> {
             rbNotAttend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    sSelectedStudents.remove(currentStudent);
+                    StudentController.sSelectedStudents.remove(currentStudent);
                 }
             });
 
             // Check the radio button based on the attended student list
-            if(sSelectedStudents.contains(currentStudent)){
+            if(StudentController.sSelectedStudents.contains(currentStudent)){
                 rbAttend.setChecked(true);
             }
 

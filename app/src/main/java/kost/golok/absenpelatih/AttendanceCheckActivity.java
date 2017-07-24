@@ -42,8 +42,8 @@ public class AttendanceCheckActivity extends AppCompatActivity {
         mStudentController = new StudentController(AttendanceCheckActivity.this, mSchool.getSchoolName());
         // Clearing the attended student list in case it is not empty and contain students
         // from another school
-        if(!AttendanceAdapter.sSelectedStudents.isEmpty()){
-            AttendanceAdapter.sSelectedStudents.clear();
+        if(!StudentController.sSelectedStudents.isEmpty()){
+            StudentController.sSelectedStudents.clear();
         }
         initView();
     }
@@ -65,9 +65,9 @@ public class AttendanceCheckActivity extends AppCompatActivity {
                 // Try to insert all the student's id in attended student list to database
                 AttendanceController attendanceController = new AttendanceController(AttendanceCheckActivity.this, mSchool.getSchoolName());
                 int error = 0;
-                for (int i = 0, size = AttendanceAdapter.sSelectedStudents.size(); i < size; ++i) {
-                    if (attendanceController.insert(AttendanceAdapter.sSelectedStudents.get(i).getId())) {
-                        AttendanceAdapter.sSelectedStudents.get(i).addJumlahKehadiran();
+                for (int i = 0, size = StudentController.sSelectedStudents.size(); i < size; ++i) {
+                    if (attendanceController.insert(StudentController.sSelectedStudents.get(i).getId())) {
+                        StudentController.sSelectedStudents.get(i).addJumlahKehadiran();
                     } else {
                         error++;
                     }
@@ -78,7 +78,7 @@ public class AttendanceCheckActivity extends AppCompatActivity {
                     Toast.makeText(AttendanceCheckActivity.this, "Behasil melakukan absen!", Toast.LENGTH_SHORT).show();
                 }
                 // Clear the attended student list as it not needed anymore
-                AttendanceAdapter.sSelectedStudents.clear();
+                StudentController.sSelectedStudents.clear();
                 AttendanceCheckActivity.this.startActivity(SchoolMenuActivity.getIntent(AttendanceCheckActivity.this, mSchool, true));
             }
         });
@@ -104,7 +104,7 @@ public class AttendanceCheckActivity extends AppCompatActivity {
         });
     }
 
-    protected static Intent getIntent(Context context, Parcelable object) {
+    static Intent getIntent(Context context, Parcelable object) {
         Intent intent = new Intent(context, AttendanceCheckActivity.class);
         intent.putExtra(Vocab.SCHOOL_EXTRA, object);
         return intent;

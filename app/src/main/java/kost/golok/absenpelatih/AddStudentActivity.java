@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import kost.golok.database.DBManager;
+import kost.golok.controller.StudentController;
 import kost.golok.object.Student;
 import kost.golok.object.School;
 import kost.golok.utility.Component;
@@ -28,9 +28,11 @@ public class AddStudentActivity extends AppCompatActivity {
     // Parent to inflate
     private LinearLayout mParentView;
 
+    // Thing to do every work that related with database
+    private StudentController mStudentController;
 
-    private DBManager mDb;
-
+    // The school to add the new students
+    private School mSchool;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,9 @@ public class AddStudentActivity extends AppCompatActivity {
     private void init(){
         mTotalStudents = getIntent().getIntExtra(Vocab.NUMBER_PICKER_VALUE_EXTRA, 1);
         mParentView = (LinearLayout) findViewById(R.id.view_tambah_murid_list_form);
-        mDb = DBManager.getInstance(this);
+        mSchool = getIntent().getParcelableExtra(Vocab.SCHOOL_EXTRA);
+        mStudentController = new StudentController(this, mSchool.getSchoolName());
+
         setListView();
 
         // Set the listener for the button
@@ -52,22 +56,19 @@ public class AddStudentActivity extends AppCompatActivity {
                 if (emptyEditTextExist()) {
                     Toast.makeText(AddStudentActivity.this, "Tidak boleh ada field yang kosong!", Toast.LENGTH_SHORT).show();
                 } else {
-                    School school = AddStudentActivity.this.getIntent().getParcelableExtra(Vocab.SCHOOL_EXTRA);
                     int count = 0;
                     for (int i = 0; i < mTotalStudents; i++) {
                         View view = mParentView.getChildAt(i);
                         String namaMurid = Component.getValue(view, R.id.et_item_form_nama_murid);
                         String kelasMurid = Component.getValue(view, R.id.et_item_form_kelas_murid);
                         Student student = new Student(namaMurid, kelasMurid);
-                        int id = mDb.insert(student, school.getSchoolName());
-                        if (id != -1) {
-                            student.setId(id);
-                            school.add(student);
+                        if (mStudentController.insert(student)) {
+                            mSchool.add(student);
                             count++;
                         }
                     }
                     Toast.makeText(AddStudentActivity.this, "Berhasil menambahkan sejumlah " + count + " murid!", Toast.LENGTH_SHORT).show();
-                    startActivity(SchoolMenuActivity.getIntent(AddStudentActivity.this, school, true));
+                    startActivity(SchoolMenuActivity.getIntent(AddStudentActivity.this, mSchool, true));
                 }
             }
         });
