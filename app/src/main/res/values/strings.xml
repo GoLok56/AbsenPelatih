@@ -1,10 +1,5 @@
 <resources>
 
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="login">Login</string>
-    <string name="login_pelatih">LOGIN PELATIH</string>
-
     <string name="sekolah_not_found">Data sekolah tidak ditemukan!</string>
     <string name="murid_not_found">Belum ada murid, tekan tombol untuk menambah murid!</string>
 
@@ -16,7 +11,7 @@
     <string name="form_nama_murid">Nama </string>
     <string name="form_kelas_murid">Kelas </string>
 
-    <string name="app_name">Aplikasi Absen</string>
+    <string name="app_name">Absen Yetece</string>
 
     <string name="nama_murid">Nama Murid</string>
     <string name="kelas_murid">Kelas Murid</string>

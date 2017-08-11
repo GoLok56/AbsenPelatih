@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("kost.golok.absenpelatih", appContext.getPackageName());
+        assertEquals("kost.io.github.golok56.absenpelatih", appContext.getPackageName());
     }
 }

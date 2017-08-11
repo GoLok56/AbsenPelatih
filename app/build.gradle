@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "kost.golok.absenpelatih"
+        applicationId "kost.io.github.golok56.absenpelatih"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
