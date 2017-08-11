@@ -7,7 +7,7 @@ import io.github.golok56.callback.base.IBaseOnOperationCompleted;
  *
  * @author Satria Adi Putra
  */
-public interface IOnInsertCompleted extends IBaseOnOperationCompleted {
+public interface IOnBasicOperationCompleted extends IBaseOnOperationCompleted {
 
     /**
      * A callback when the operation is a success.
