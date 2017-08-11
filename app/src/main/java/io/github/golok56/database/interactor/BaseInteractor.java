@@ -4,9 +4,8 @@ package io.github.golok56.database.interactor;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.ArrayList;
-
-import io.github.golok56.callback.ICallBack;
+import io.github.golok56.callback.IOnReadCompleted;
+import io.github.golok56.callback.IOnBasicOperationCompleted;
 import io.github.golok56.database.DBHelper;
 
 
@@ -23,8 +22,13 @@ abstract class BaseInteractor<T> {
         mDb = db;
     }
 
-    // Get all the object from the database in form of ArrayList
-    public abstract ArrayList<T> getList(String name);
+    /**
+     * Read all the object of T type from database.
+     *
+     * @param name The object to get inserted to database.
+     * @param callback Callback after the operation complete.
+     */
+    public abstract void getList(String name, IOnReadCompleted<T> callback);
 
     // Clearing the database
     public abstract void clear(String name);
@@ -32,7 +36,12 @@ abstract class BaseInteractor<T> {
     // Delete a row from database
     public abstract boolean delete(T obj);
 
-    // Insert the given data to database
-    public abstract void insert(T obj, ICallBack callback);
+    /**
+     * Inserting a new object of T type to database.
+     *
+     * @param obj The object to get inserted to database.
+     * @param callback Callback after the operation complete.
+     */
+    public abstract void insert(T obj, IOnBasicOperationCompleted callback);
 
 }

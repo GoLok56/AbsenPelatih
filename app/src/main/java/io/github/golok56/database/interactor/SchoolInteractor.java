@@ -6,9 +6,12 @@ import android.database.Cursor;
 
 import java.util.ArrayList;
 
+import io.github.golok56.callback.IOnReadCompleted;
+import io.github.golok56.callback.IOnBasicOperationCompleted;
 import io.github.golok56.database.DBHelper;
 import io.github.golok56.database.DBSchema;
 import io.github.golok56.object.School;
+import io.github.golok56.utility.ValuesProvider;
 
 public class SchoolInteractor extends BaseInteractor<School> {
 
@@ -17,52 +20,82 @@ public class SchoolInteractor extends BaseInteractor<School> {
     }
 
     @Override
-    public ArrayList<School> getList(String name) {
-        StudentInteractor studentController = new StudentInteractor(mDb);
+    public void getList(String name, final IOnReadCompleted<School> callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                StudentInteractor studentInteractor = new StudentInteractor(mDb);
 
-        // Read all the data in School Table
-        Cursor cursor = mDb.query(DBSchema.School.TABLE_NAME, null, null, null, null, null, null);
+                Cursor cursor = mDb.query(
+                        DBSchema.School.TABLE_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                );
 
-        ArrayList<School> list = new ArrayList<>(cursor.getCount());
-        while (cursor.moveToNext()) {
-            // Retrieving the school data that was found in database
-            int id = cursor.getInt(cursor.getColumnIndex(DBSchema.School._ID));
-            String schoolName = cursor.getString(cursor.getColumnIndex(DBSchema.School.NAME_COLUMN));
-            studentController.setSchoolName(schoolName);
-            // Add new school to the list
-            list.add(new School(id, schoolName, studentController.getList("")));
-        }
-        cursor.close();
+                ArrayList<School> list = new ArrayList<>(cursor.getCount());
+                while (cursor.moveToNext()) {
+                    int id = cursor.getInt(cursor.getColumnIndex(DBSchema.School._ID));
+                    String schoolName = cursor.getString(cursor.getColumnIndex(DBSchema.School.NAME_COLUMN));
+                    studentInteractor.setSchoolName(schoolName);
+                    list.add(new School(id, schoolName, studentInteractor.getList("")));
+                }
+                cursor.close();
 
-        return cursor.getCount() == 0 ? null : list;
+                if (cursor.getCount() != 0) {
+                    callback.onSuccess(list);
+                } else {
+                    callback.onFailed();
+                }
+            }
+        }).start();
     }
 
     @Override
-    public boolean insert(School school) {
-        // Get the name of new school
-        String schoolName = school.getSchoolName();
+    public void insert(final School school, final IOnBasicOperationCompleted callBack) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ContentValues values = ValuesProvider.get(school);
 
-        ContentValues values = new ContentValues();
-        values.put(DBSchema.School.NAME_COLUMN, schoolName);
+                String schoolName = school.getSchoolName();
+                DBHelper.createAttendanceTable(mDb, schoolName);
+                DBHelper.createStudentTable(mDb, schoolName);
 
-        // Create a table student and attendance related to this school by name
-        DBHelper.createAttendanceTable(mDb, schoolName);
-        DBHelper.createStudentTable(mDb, schoolName);
-
-        long row = mDb.insert(DBSchema.School.TABLE_NAME, null, values);
-        return row != -1;
+                if (mDb.insert(DBSchema.School.TABLE_NAME, null, values) != -1) {
+                    callBack.onSuccess();
+                } else {
+                    callBack.onFailed();
+                }
+            }
+        }).start();
     }
 
     @Override
-    public void clear(String schoolName){
+    public void clear(String schoolName) {
         String namaTable = DBSchema.Attendance.TABLE_NAME + schoolName;
         mDb.delete(namaTable, null, null);
     }
 
+    public void clear(final ArrayList<School> schools, final IOnBasicOperationCompleted callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0, size = schools.size(); i < size; ++i) {
+                    clear(schools.get(i).getSchoolName().replaceAll("\\s", ""));
+                }
+                callback.onSuccess();
+            }
+        }).start();
+    }
+
     @Override
     public boolean delete(School school) {
-        String[] selectionArgs = { String.valueOf(school.getId()) };
-        if(mDb.delete(DBSchema.School.TABLE_NAME, "_id=?", selectionArgs) != 0){
+        String[] selectionArgs = {String.valueOf(school.getId())};
+        if (mDb.delete(DBSchema.School.TABLE_NAME, "_id=?", selectionArgs) != 0) {
             String sql = "DROP TABLE IF EXISTS ";
             String schoolName = school.getSchoolName().replaceAll("\\s", "");
             String studentTable = DBSchema.Student.TABLE_NAME + schoolName;

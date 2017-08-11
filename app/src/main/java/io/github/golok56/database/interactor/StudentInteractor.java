@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 
-import io.github.golok56.callback.ICallBack;
+import io.github.golok56.callback.base.IBaseOnOperationCompleted;
 import io.github.golok56.database.DBSchema;
 import io.github.golok56.object.Student;
 import io.github.golok56.utility.ValuesProvider;
@@ -57,10 +57,8 @@ public class StudentInteractor extends BaseInteractor<Student> {
 
     @Override
     // Insert a new student to database
-    public void insert(Student student, ICallBack callBack) {
-        ContentValues values = ValuesProvider.get(student)
-        values.put(DBSchema.Student.CLASS_COLUMN, student.getStudentClass());
-        values.put(DBSchema.Student.NAME_COLUMN, student.getName());
+    public void insert(Student student, IBaseOnOperationCompleted callBack) {
+        ContentValues values = ValuesProvider.get(student);
         int id = (int) mDb.insert(mTableName, null, values);
         student.setId(id);
         return id != -1;
