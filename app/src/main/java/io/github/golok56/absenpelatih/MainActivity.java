@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
     private MainActivityPresenter mPresenter;
 
     // Thing to do every work that related with database
-    private SchoolBaseInteractor mSchoolController;
+    private SchoolBaseInteractor mSchoolInteractor;
 
     // The school of list to display on screen
     private ArrayList<School> mSchoolList;
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
                                     Toast.makeText(MainActivity.this, "Nama sekolah tidak boleh kosong!", Toast.LENGTH_SHORT).show();
                                 else {
                                     // Inserting the new school with given name to database
-                                    if (mSchoolController.insert(new School(schoolName))) {
+                                    if (mSchoolInteractor.insert(new School(schoolName))) {
                                         MainActivity.this.refreshView();
                                         Toast.makeText(MainActivity.this, "Berhasil menambahkan " + schoolName, Toast.LENGTH_SHORT).show();
                                     } else {
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
     // Updating the school list and displaying the new updated list to screen
     private void refreshView(){
         // Retrieving the list from database
-        mSchoolList = mSchoolController.getList("");
+        mSchoolList = mSchoolInteractor.getList("");
         if (mSchoolList != null) {
             // Setting up the listview to display the school list
             ListView listView = (ListView) findViewById(R.id.lv_main_menu_school_list);
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
                         if (passToCheck.equals(password)) {
                             // Clear the attendance history from all school
                             for (int i = 0, size = mSchoolList.size(); i < size; i++) {
-                                mSchoolController.clear(mSchoolList.get(i).getSchoolName().replaceAll("\\s", ""));
+                                mSchoolInteractor.clear(mSchoolList.get(i).getSchoolName().replaceAll("\\s", ""));
                             }
                             Toast.makeText(MainActivity.this, "Berhasil menghapus semua absen!", Toast.LENGTH_SHORT).show();
                         } else {
@@ -325,6 +325,11 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
         absenSheet.addMergedRegion(new CellRangeAddress(2, 3, colToMerge, colToMerge));
         cell.setCellStyle(cs);
         cell.setCellValue(value);
+    }
+
+    @Override
+    public void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     static Intent getIntent(Context context) {
