@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -42,8 +40,7 @@ import io.github.golok56.database.interactor.SchoolInteractor;
 import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
 import io.github.golok56.presenter.MainActivityPresenter;
-import io.github.golok56.utility.Component;
-import io.github.golok56.utility.Vocab;
+import io.github.golok56.utility.PreferenceManager;
 import io.github.golok56.view.IMainActivityView;
 
 public class MainActivity extends AppCompatActivity implements IMainActivityView {
@@ -53,15 +50,28 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
      */
     private MainActivityPresenter mPresenter;
 
-    // The school of list to display on screen
+    /**
+     * The school of list to display on screen
+     */
     private ArrayList<School> mSchoolList;
+
+    private ListView mLvSchools;
+
+    private EditText mEtSchoolName;
+    private EditText mEtOldPassword;
+    private EditText mEtNewPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        mPresenter = new MainActivityPresenter(this, new SchoolInteractor(this));
+        mPresenter = new MainActivityPresenter(
+                this,
+                new SchoolInteractor(this),
+                PreferenceManager.getInstance(this)
+        );
+        mLvSchools = (ListView) findViewById(R.id.lv_main_menu_school_list);
 
         findViewById(R.id.fab_main_menu_add_school).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
                 mPresenter.onAddSchoolClicked();
             }
         });
-        init();
+        mPresenter.getItems();
     }
 
     @Override
@@ -86,10 +96,10 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
                 exportDB();
                 break;
             case R.id.menu_item_clear_all:
-                showDialogClearAll();
+                mPresenter.onItemClearClicked();
                 break;
             case R.id.menu_item_change_password:
-                showDialogChangePassword();
+                mPresenter.onChangePassClicked();
                 break;
         }
         return true;
@@ -98,103 +108,8 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
     @Override
     protected void onResume() {
         super.onResume();
-        // Updating school list, after user add some students and get back here using navigation bar
-        refreshView();
-    }
+        mPresenter.getItems();
 
-    private void init() {
-
-        refreshView();
-    }
-
-    // Updating the school list and displaying the new updated list to screen
-    private void refreshView() {
-        // Retrieving the list from database
-        mSchoolList = mSchoolInteractor.getList("");
-        if (mSchoolList != null) {
-            // Setting up the listview to display the school list
-            ListView listView = (ListView) findViewById(R.id.lv_main_menu_school_list);
-            listView.setAdapter(new SchoolAdapter(this, mSchoolList));
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    School current = (School) parent.getItemAtPosition(position);
-                    startActivity(SchoolMenuActivity.getIntent(MainActivity.this, current, false));
-                }
-            });
-            listView.setVisibility(View.VISIBLE);
-            TextView tv = (TextView) findViewById(R.id.tv_main_menu_school_not_found);
-            tv.setVisibility(View.GONE);
-        }
-    }
-
-    private void showDialogClearAll() {
-        // Showing the comfirmation dialog and ask for password
-        final EditText etPass = new EditText(this);
-        etPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        new AlertDialog.Builder(this)
-                .setTitle("Masukkan password!")
-                .setView(etPass)
-                .setPositiveButton("Konfirmasi", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        String passToCheck = etPass.getText().toString();
-                        SharedPreferences pref = MainActivity.this.getSharedPreferences(Vocab.PREF_NAME, Context.MODE_PRIVATE);
-                        String password = pref.getString(Vocab.PASSWORD, Vocab.DEFAULT_PASSWORD);
-                        if (passToCheck.equals(password)) {
-                            // Clear the attendance history from all school
-                            for (int i = 0, size = mSchoolList.size(); i < size; i++) {
-                                mSchoolInteractor.clear(mSchoolList.get(i).getSchoolName().replaceAll("\\s", ""));
-                            }
-                            Toast.makeText(MainActivity.this, "Berhasil menghapus semua absen!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(MainActivity.this, "Password yang dimasukkan salah!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(MainActivity.this, "Batal menghapus!", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .create()
-                .show();
-    }
-
-    private void showDialogChangePassword() {
-        @SuppressLint("InflateParams")
-        final View view = getLayoutInflater().inflate(R.layout.dialog_change_password, null);
-        new AlertDialog.Builder(this)
-                .setView(view)
-                .setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String oldPass = Component.getText(view, R.id.et_dialog_change_password_old_password);
-                        String newPass = Component.getText(view, R.id.et_dialog_change_password_new_password);
-                        if (oldPass.isEmpty() || newPass.isEmpty())
-                            Toast.makeText(MainActivity.this, "Tidak boleh ada form yang kosong!", Toast.LENGTH_SHORT).show();
-                        else {
-                            SharedPreferences pref = MainActivity.this.getSharedPreferences(Vocab.PREF_NAME, Context.MODE_PRIVATE);
-                            String savedPassword = pref.getString(Vocab.PASSWORD, Vocab.DEFAULT_PASSWORD);
-                            // Inserting the new school with given name to database
-                            if (oldPass.equals(savedPassword)) {
-                                pref.edit().putString(Vocab.PASSWORD, newPass).apply();
-                                Toast.makeText(MainActivity.this, "Berhasil mengganti password!", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(MainActivity.this, "Password lama yang dimasukkan salah!", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                })
-                .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(MainActivity.this, "Batal mengganti password!", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .create()
-                .show();
     }
 
     private void exportDB() {
@@ -299,31 +214,120 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
     }
 
     @Override
-    public void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    public void setSchoolList(ArrayList<School> schoolList) {
+        mSchoolList = schoolList;
+        if (mSchoolList != null) {
+            mLvSchools.setAdapter(new SchoolAdapter(this, mSchoolList));
+            mLvSchools.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    mPresenter.onItemClicked((School) parent.getItemAtPosition(position));
+                }
+            });
+            mLvSchools.setVisibility(View.VISIBLE);
+            findViewById(R.id.tv_main_menu_school_not_found).setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void showToast(final String msg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
     public void showAddSchoolDialog() {
         @SuppressLint("InflateParams")
-        final View view = getLayoutInflater().inflate(R.layout.dialog_add_school, null);
+        View view = getLayoutInflater().inflate(R.layout.dialog_add_school, null);
+        mEtSchoolName = (EditText) view.findViewById(R.id.et_dialog_add_school_school_name);
         new AlertDialog.Builder(this).setView(view)
                 .setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String schoolName =
-                                Component.getText(view, R.id.et_dialog_add_school_schools_name);
-                        mPresenter.onSaveSchoolClicked(schoolName);
+                        mPresenter.onSaveSchoolClicked(mEtSchoolName.getText().toString());
                     }
                 })
                 .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(MainActivity.this, "Penambahan sekolah dibatalkan!", Toast.LENGTH_SHORT).show();
+                        mPresenter.onCancelSaveClicked();
                     }
                 })
                 .create()
                 .show();
+    }
+
+    @Override
+    public void showClearDialog() {
+        final EditText etPass = new EditText(this);
+        etPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        new AlertDialog.Builder(this)
+                .setTitle("Masukkan password!")
+                .setView(etPass)
+                .setPositiveButton("Konfirmasi", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int id) {
+                        mPresenter.onClearConfirmClicked(mSchoolList, etPass.getText().toString());
+                    }
+                })
+                .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPresenter.onClearCancelClicked();
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    @Override
+    public void showChangePasswordDialog() {
+        @SuppressLint("InflateParams")
+        View view = getLayoutInflater().inflate(R.layout.dialog_change_password, null);
+        mEtOldPassword = (EditText) view.findViewById(R.id.et_dialog_change_password_old_password);
+        mEtNewPassword = (EditText) view.findViewById(R.id.et_dialog_change_password_new_password);
+        new AlertDialog.Builder(this)
+                .setView(view)
+                .setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPresenter.onChangePassComfirmed(
+                                mEtOldPassword.getText().toString(),
+                                mEtNewPassword.getText().toString()
+                        );
+                    }
+                })
+                .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mPresenter.onChangePassCanceled();
+                    }
+                })
+                .create()
+                .show();
+    }
+    @Override
+    public void showSchoolNameError(String msg) {
+        mEtSchoolName.setError(msg);
+    }
+
+    @Override
+    public void showOldPasswordError(String msg) {
+        mEtOldPassword.setError(msg);
+    }
+
+    @Override
+    public void showNewPasswordError(String msg) {
+        mEtNewPassword.setError(msg);
+    }
+
+    @Override
+    public void showSchoolMenu(School school) {
+        startActivity(SchoolMenuActivity.getIntent(this, school, false));
     }
 
     static Intent getIntent(Context context) {
