@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import io.github.golok56.database.DBSchema;
 import io.github.golok56.object.Student;
 
-public class StudentBaseInteractor extends BaseInteractor<Student> {
+public class StudentInteractor extends BaseInteractor<Student> {
 
     // The list of students that selected for some change
     public static final ArrayList<Student> sSelectedStudents = new ArrayList<>();
@@ -21,13 +21,13 @@ public class StudentBaseInteractor extends BaseInteractor<Student> {
     // The name of the school the student come from
     private String mSchoolName;
 
-    public StudentBaseInteractor(Context ctx, String schoolName) {
+    public StudentInteractor(Context ctx, String schoolName) {
         super(ctx);
         mSchoolName = schoolName.replaceAll("\\s", "");
         mTableName = DBSchema.Student.TABLE_NAME  + mSchoolName;
     }
 
-    StudentBaseInteractor(SQLiteDatabase db){
+    StudentInteractor(SQLiteDatabase db){
         super(db);
     }
 

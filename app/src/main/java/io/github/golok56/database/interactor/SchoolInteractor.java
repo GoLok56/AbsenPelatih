@@ -10,15 +10,15 @@ import io.github.golok56.database.DBHelper;
 import io.github.golok56.database.DBSchema;
 import io.github.golok56.object.School;
 
-public class SchoolBaseInteractor extends BaseInteractor<School> {
+public class SchoolInteractor extends BaseInteractor<School> {
 
-    public SchoolBaseInteractor(Context ctx) {
+    public SchoolInteractor(Context ctx) {
         super(ctx);
     }
 
     @Override
     public ArrayList<School> getList(String name) {
-        StudentBaseInteractor studentController = new StudentBaseInteractor(mDb);
+        StudentInteractor studentController = new StudentInteractor(mDb);
 
         // Read all the data in School Table
         Cursor cursor = mDb.query(DBSchema.School.TABLE_NAME, null, null, null, null, null, null);
