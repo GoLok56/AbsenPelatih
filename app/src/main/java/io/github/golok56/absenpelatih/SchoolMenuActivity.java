@@ -43,9 +43,9 @@ import java.util.List;
 
 import io.github.golok56.R;
 import io.github.golok56.adapter.StudentAdapter;
-import io.github.golok56.controller.AttendanceController;
-import io.github.golok56.controller.SchoolController;
-import io.github.golok56.controller.StudentController;
+import io.github.golok56.database.interactor.AttendanceInteractor;
+import io.github.golok56.database.interactor.SchoolBaseInteractor;
+import io.github.golok56.database.interactor.StudentBaseInteractor;
 import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
 import io.github.golok56.utility.Vocab;
@@ -65,7 +65,7 @@ public class SchoolMenuActivity extends AppCompatActivity {
     private String mSchoolName;
 
     // Attendance Controller to do database works
-    private AttendanceController mAttendanceController;
+    private AttendanceInteractor mAttendanceInteractor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,8 +149,8 @@ public class SchoolMenuActivity extends AppCompatActivity {
     private void init() {
         // Initializing global variables
         mSchoolName = mSchool.getSchoolName();
-        mAttendanceController = new AttendanceController(this, mSchoolName);
-        StudentController.sSelectedStudents.clear();
+        mAttendanceInteractor = new AttendanceInteractor(this, mSchoolName);
+        StudentBaseInteractor.sSelectedStudents.clear();
     }
 
     private void showDialogClear(){
@@ -169,7 +169,7 @@ public class SchoolMenuActivity extends AppCompatActivity {
                         String password = pref.getString(Vocab.PASSWORD, Vocab.DEFAULT_PASSWORD);
                         if (passToCheck.equals(password)) {
                             // Clearing the attendance history
-                            mAttendanceController.clear("");
+                            mAttendanceInteractor.clear("");
                             Toast.makeText(SchoolMenuActivity.this, "Berhasil menghapus absen!", Toast.LENGTH_SHORT).show();
                             startActivity(MainActivity.getIntent(SchoolMenuActivity.this));
                         } else {
@@ -196,7 +196,7 @@ public class SchoolMenuActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // Delete active school from database
-                            if (new SchoolController(SchoolMenuActivity.this).delete(mSchool)) {
+                            if (new SchoolBaseInteractor(SchoolMenuActivity.this).delete(mSchool)) {
                                 Toast.makeText(SchoolMenuActivity.this, "Berhasil menghapus " + mSchoolName + "!", Toast.LENGTH_SHORT).show();
                                 SchoolMenuActivity.this.startActivity(MainActivity.getIntent(SchoolMenuActivity.this));
                             } else {
@@ -244,9 +244,9 @@ public class SchoolMenuActivity extends AppCompatActivity {
     private void deleteStudent(){
         // Trying to delete all selected students
         boolean error = false;
-        StudentController studentController = new StudentController(this, mSchoolName);
-        for(int i = 0, size = StudentController.sSelectedStudents.size(); i < size; i++){
-            Student student = StudentController.sSelectedStudents.get(i);
+        StudentBaseInteractor studentController = new StudentBaseInteractor(this, mSchoolName);
+        for(int i = 0, size = StudentBaseInteractor.sSelectedStudents.size(); i < size; i++){
+            Student student = StudentBaseInteractor.sSelectedStudents.get(i);
             if(studentController.delete(student)){
                 // Remove the student from the active school
                 mSchool.remove(student);
@@ -260,7 +260,7 @@ public class SchoolMenuActivity extends AppCompatActivity {
             Toast.makeText(this, "Terjadi beberapa kesalahan saat menghapus!", Toast.LENGTH_SHORT).show();
         }
         // Clear the selected students since it is no longer needed
-        StudentController.sSelectedStudents.clear();
+        StudentBaseInteractor.sSelectedStudents.clear();
         // Refreshing the view
         startActivity(getIntent(this, mSchool, true));
     }
@@ -287,10 +287,10 @@ public class SchoolMenuActivity extends AppCompatActivity {
                         Student student = (Student) parent.getItemAtPosition(position);
                         CheckBox cb = (CheckBox) view.findViewById(R.id.cb_item_murid_delete_murid_selected);
                         cb.setChecked(!cb.isChecked());
-                        if (StudentController.sSelectedStudents.contains(student)) {
-                            StudentController.sSelectedStudents.remove(student);
+                        if (StudentBaseInteractor.sSelectedStudents.contains(student)) {
+                            StudentBaseInteractor.sSelectedStudents.remove(student);
                         } else {
-                            StudentController.sSelectedStudents.add(student);
+                            StudentBaseInteractor.sSelectedStudents.add(student);
                         }
                     }
                 });
@@ -324,7 +324,7 @@ public class SchoolMenuActivity extends AppCompatActivity {
         // Try to get all available date also the total attendance in each
         HashMap<String, Integer> dateMap = null;
         try {
-            dateMap = mAttendanceController.getDateAndTotalAttendance();
+            dateMap = mAttendanceInteractor.getDateAndTotalAttendance();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -393,7 +393,7 @@ public class SchoolMenuActivity extends AppCompatActivity {
                     } else if (j == lastCol) {
                         cell.setCellValue(currentStudent.getTotalAttendance());
                     } else {
-                        cell.setCellValue(mAttendanceController.getAttendanceInfo(date.get(j-1), currentStudent.getId()));
+                        cell.setCellValue(mAttendanceInteractor.getAttendanceInfo(date.get(j-1), currentStudent.getId()));
                     }
 
                 }

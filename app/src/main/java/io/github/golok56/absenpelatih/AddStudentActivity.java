@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import io.github.golok56.R;
-import io.github.golok56.controller.StudentController;
+import io.github.golok56.database.interactor.StudentBaseInteractor;
 import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
 import io.github.golok56.utility.Component;
@@ -31,7 +31,7 @@ public class AddStudentActivity extends AppCompatActivity {
     private LinearLayout mParentView;
 
     // Thing to do every work that related with database
-    private StudentController mStudentController;
+    private StudentBaseInteractor mStudentController;
 
     // The school to add the new students
     private School mSchool;
@@ -52,7 +52,7 @@ public class AddStudentActivity extends AppCompatActivity {
     private void init(){
         mTotalStudents = getIntent().getIntExtra(Vocab.NUMBER_PICKER_VALUE_EXTRA, 1);
         mParentView = (LinearLayout) findViewById(R.id.view_tambah_murid_list_form);
-        mStudentController = new StudentController(this, mSchool.getSchoolName());
+        mStudentController = new StudentBaseInteractor(this, mSchool.getSchoolName());
 
         setListView();
 

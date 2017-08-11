@@ -18,8 +18,8 @@ import java.util.ArrayList;
 
 import io.github.golok56.R;
 import io.github.golok56.adapter.AttendanceAdapter;
-import io.github.golok56.controller.AttendanceController;
-import io.github.golok56.controller.StudentController;
+import io.github.golok56.database.interactor.AttendanceInteractor;
+import io.github.golok56.database.interactor.StudentBaseInteractor;
 import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
 import io.github.golok56.utility.Vocab;
@@ -30,7 +30,7 @@ public class AttendanceCheckActivity extends AppCompatActivity {
     private School mSchool;
 
     // Thing to do every work that related with database
-    private StudentController mStudentController;
+    private StudentBaseInteractor mStudentController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +46,11 @@ public class AttendanceCheckActivity extends AppCompatActivity {
     }
 
     private void init(){
-        mStudentController = new StudentController(AttendanceCheckActivity.this, mSchool.getSchoolName());
+        mStudentController = new StudentBaseInteractor(AttendanceCheckActivity.this, mSchool.getSchoolName());
         // Clearing the attended student list in case it is not empty and contain students
         // from another school
-        if(!StudentController.sSelectedStudents.isEmpty()){
-            StudentController.sSelectedStudents.clear();
+        if(!StudentBaseInteractor.sSelectedStudents.isEmpty()){
+            StudentBaseInteractor.sSelectedStudents.clear();
         }
         initView();
     }
@@ -70,11 +70,11 @@ public class AttendanceCheckActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Try to insert all the student's id in attended student list to database
-                AttendanceController attendanceController = new AttendanceController(AttendanceCheckActivity.this, mSchool.getSchoolName());
+                AttendanceInteractor attendanceInteractor = new AttendanceInteractor(AttendanceCheckActivity.this, mSchool.getSchoolName());
                 int error = 0;
-                for (int i = 0, size = StudentController.sSelectedStudents.size(); i < size; ++i) {
-                    if (attendanceController.insert(StudentController.sSelectedStudents.get(i).getId())) {
-                        StudentController.sSelectedStudents.get(i).addJumlahKehadiran();
+                for (int i = 0, size = StudentBaseInteractor.sSelectedStudents.size(); i < size; ++i) {
+                    if (attendanceInteractor.insert(StudentBaseInteractor.sSelectedStudents.get(i).getId())) {
+                        StudentBaseInteractor.sSelectedStudents.get(i).addJumlahKehadiran();
                     } else {
                         error++;
                     }
@@ -85,7 +85,7 @@ public class AttendanceCheckActivity extends AppCompatActivity {
                     Toast.makeText(AttendanceCheckActivity.this, "Behasil melakukan absen!", Toast.LENGTH_SHORT).show();
                 }
                 // Clear the attended student list as it not needed anymore
-                StudentController.sSelectedStudents.clear();
+                StudentBaseInteractor.sSelectedStudents.clear();
                 AttendanceCheckActivity.this.startActivity(SchoolMenuActivity.getIntent(AttendanceCheckActivity.this, mSchool, true));
             }
         });

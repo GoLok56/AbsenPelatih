@@ -11,7 +11,7 @@ import android.widget.RadioButton;
 import java.util.ArrayList;
 
 import io.github.golok56.R;
-import io.github.golok56.controller.StudentController;
+import io.github.golok56.database.interactor.StudentBaseInteractor;
 import io.github.golok56.object.Student;
 import io.github.golok56.utility.Component;
 
@@ -38,7 +38,7 @@ public class AttendanceAdapter extends ArrayAdapter<Student> {
             rbAttend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    StudentController.sSelectedStudents.add(currentStudent);
+                    StudentBaseInteractor.sSelectedStudents.add(currentStudent);
                 }
             });
 
@@ -47,12 +47,12 @@ public class AttendanceAdapter extends ArrayAdapter<Student> {
             rbNotAttend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    StudentController.sSelectedStudents.remove(currentStudent);
+                    StudentBaseInteractor.sSelectedStudents.remove(currentStudent);
                 }
             });
 
             // Check the radio button based on the attended student list
-            if(StudentController.sSelectedStudents.contains(currentStudent)){
+            if(StudentBaseInteractor.sSelectedStudents.contains(currentStudent)){
                 rbAttend.setChecked(true);
             }
 

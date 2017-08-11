@@ -38,17 +38,22 @@ import java.util.ArrayList;
 
 import io.github.golok56.R;
 import io.github.golok56.adapter.SchoolAdapter;
-import io.github.golok56.controller.AttendanceController;
-import io.github.golok56.controller.SchoolController;
+import io.github.golok56.database.interactor.AttendanceInteractor;
+import io.github.golok56.database.interactor.SchoolBaseInteractor;
 import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
+import io.github.golok56.presenter.MainActivityPresenter;
 import io.github.golok56.utility.Component;
 import io.github.golok56.utility.Vocab;
+import io.github.golok56.view.IMainActivityView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IMainActivityView {
+
+    /** The presenter for this Activity */
+    private MainActivityPresenter mPresenter;
 
     // Thing to do every work that related with database
-    private SchoolController mSchoolController;
+    private SchoolBaseInteractor mSchoolController;
 
     // The school of list to display on screen
     private ArrayList<School> mSchoolList;
@@ -57,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        mPresenter = new MainActivityPresenter(this);
+
         init();
     }
 
@@ -91,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        mSchoolController = new SchoolController(this);
         // Create a dialog when the floating button is clicked
         FloatingActionButton fabCreate = (FloatingActionButton) findViewById(R.id.fab_main_menu_add_school);
         fabCreate.setOnClickListener(new View.OnClickListener() {
@@ -223,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         // Try to get all available month from database for the report in xls file
         String[] monthInText = null;
         try {
-            monthInText = new AttendanceController(this, mSchoolList.get(0).getSchoolName()).getAllAvailableMonth();
+            monthInText = new AttendanceInteractor(this, mSchoolList.get(0).getSchoolName()).getAllAvailableMonth();
         } catch (ParseException ex){
             ex.printStackTrace();
         }
