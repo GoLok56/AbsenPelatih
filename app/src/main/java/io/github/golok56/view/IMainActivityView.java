@@ -10,4 +10,9 @@ import io.github.golok56.view.base.IBaseView;
  */
 public interface IMainActivityView extends IBaseView {
 
+    /**
+     * Show form dialog to add a new {@link io.github.golok56.object.School} to database.
+     */
+    void showAddSchoolDialog();
+
 }

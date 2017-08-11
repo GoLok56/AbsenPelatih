@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 
+import io.github.golok56.callback.ICallBack;
 import io.github.golok56.database.DBHelper;
 
 
@@ -32,6 +33,6 @@ abstract class BaseInteractor<T> {
     public abstract boolean delete(T obj);
 
     // Insert the given data to database
-    public abstract boolean insert(T obj);
+    public abstract void insert(T obj, ICallBack callback);
 
 }

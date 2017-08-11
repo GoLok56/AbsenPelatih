@@ -11,5 +11,5 @@ public interface IBaseView {
      *
      * @param msg Message that should be displayed.
      */
-    public void showToast(String msg);
+    void showToast(String msg);
 }

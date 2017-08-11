@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -39,7 +38,7 @@ import java.util.ArrayList;
 import io.github.golok56.R;
 import io.github.golok56.adapter.SchoolAdapter;
 import io.github.golok56.database.interactor.AttendanceInteractor;
-import io.github.golok56.database.interactor.SchoolBaseInteractor;
+import io.github.golok56.database.interactor.SchoolInteractor;
 import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
 import io.github.golok56.presenter.MainActivityPresenter;
@@ -49,11 +48,10 @@ import io.github.golok56.view.IMainActivityView;
 
 public class MainActivity extends AppCompatActivity implements IMainActivityView {
 
-    /** The presenter for this Activity */
+    /**
+     * The presenter for this Activity
+     */
     private MainActivityPresenter mPresenter;
-
-    // Thing to do every work that related with database
-    private SchoolBaseInteractor mSchoolInteractor;
 
     // The school of list to display on screen
     private ArrayList<School> mSchoolList;
@@ -63,8 +61,14 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        mPresenter = new MainActivityPresenter(this);
+        mPresenter = new MainActivityPresenter(this, new SchoolInteractor(this));
 
+        findViewById(R.id.fab_main_menu_add_school).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.onAddSchoolClicked();
+            }
+        });
         init();
     }
 
@@ -99,45 +103,12 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
     }
 
     private void init() {
-        // Create a dialog when the floating button is clicked
-        FloatingActionButton fabCreate = (FloatingActionButton) findViewById(R.id.fab_main_menu_add_school);
-        fabCreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                @SuppressLint("InflateParams")
-                final View view = MainActivity.this.getLayoutInflater().inflate(R.layout.dialog_add_school, null);
-                new AlertDialog.Builder(MainActivity.this).setView(view)
-                        .setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String schoolName = Component.getText(view, R.id.et_dialog_add_school_schools_name);
-                                if (schoolName.isEmpty())
-                                    Toast.makeText(MainActivity.this, "Nama sekolah tidak boleh kosong!", Toast.LENGTH_SHORT).show();
-                                else {
-                                    // Inserting the new school with given name to database
-                                    if (mSchoolInteractor.insert(new School(schoolName))) {
-                                        MainActivity.this.refreshView();
-                                        Toast.makeText(MainActivity.this, "Berhasil menambahkan " + schoolName, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(MainActivity.this, "Terjadi Kesalahan!", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                        })
-                        .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(MainActivity.this, "Penambahan sekolah dibatalkan!", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .create()
-                        .show();
-            }
-        });
+
         refreshView();
     }
+
     // Updating the school list and displaying the new updated list to screen
-    private void refreshView(){
+    private void refreshView() {
         // Retrieving the list from database
         mSchoolList = mSchoolInteractor.getList("");
         if (mSchoolList != null) {
@@ -191,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
                 .show();
     }
 
-    private void showDialogChangePassword(){
+    private void showDialogChangePassword() {
         @SuppressLint("InflateParams")
         final View view = getLayoutInflater().inflate(R.layout.dialog_change_password, null);
         new AlertDialog.Builder(this)
@@ -231,13 +202,13 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
         String[] monthInText = null;
         try {
             monthInText = new AttendanceInteractor(this, mSchoolList.get(0).getSchoolName()).getAllAvailableMonth();
-        } catch (ParseException ex){
+        } catch (ParseException ex) {
             ex.printStackTrace();
         }
         // Creating the content of the xls file
         Workbook workbook = new HSSFWorkbook();
         Sheet attendanceSheet = workbook.createSheet("Absen");
-        if(monthInText != null) {
+        if (monthInText != null) {
             // Set the max row and max col of the xls file
             int colCount = monthInText.length + 2;
             int rowCount = mSchoolList.size() + 4;
@@ -286,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
                         } else {
                             ArrayList<Student> students = currentSchool.getStudents();
                             int attendanceTotal = 0;
-                            for(int k = 0, size = students.size(); k < size; k++){
+                            for (int k = 0, size = students.size(); k < size; k++) {
                                 attendanceTotal += students.get(k).getTotalAttendance();
                             }
                             cell.setCellValue(String.valueOf(attendanceTotal));
@@ -330,6 +301,29 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
     @Override
     public void showToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showAddSchoolDialog() {
+        @SuppressLint("InflateParams")
+        final View view = getLayoutInflater().inflate(R.layout.dialog_add_school, null);
+        new AlertDialog.Builder(this).setView(view)
+                .setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String schoolName =
+                                Component.getText(view, R.id.et_dialog_add_school_schools_name);
+                        mPresenter.onSaveSchoolClicked(schoolName);
+                    }
+                })
+                .setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(MainActivity.this, "Penambahan sekolah dibatalkan!", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .create()
+                .show();
     }
 
     static Intent getIntent(Context context) {
