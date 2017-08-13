@@ -8,9 +8,10 @@ import io.github.golok56.database.interactor.SchoolInteractor;
 import io.github.golok56.object.School;
 import io.github.golok56.utility.PreferenceManager;
 import io.github.golok56.view.IMainActivityView;
+import io.github.golok56.view.activity.MainActivity;
 
 /**
- * The presenter for {@link io.github.golok56.absenpelatih.MainActivity}.
+ * The presenter for {@link MainActivity}.
  *
  * @author Satria Adi Putra
  */
