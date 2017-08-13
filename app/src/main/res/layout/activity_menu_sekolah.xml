@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/view_activity_menu_sekolah_not_found"
+        android:id="@+id/view_activity_school_menu_not_found"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -28,7 +28,7 @@
     </LinearLayout>
 
     <ListView
-        android:id="@+id/lv_menu_sekolah_list_murid"
+        android:id="@+id/lv_school_menu_student_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />

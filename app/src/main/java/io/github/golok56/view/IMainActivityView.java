@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import io.github.golok56.object.School;
 import io.github.golok56.view.activity.MainActivity;
+import io.github.golok56.view.activity.SchoolMenuActivity;
 import io.github.golok56.view.base.IBaseView;
 
 /**
@@ -50,7 +51,7 @@ public interface IMainActivityView extends IBaseView {
     void setSchoolList(ArrayList<School> schoolList);
 
     /**
-     * Start an intent to {@link io.github.golok56.absenpelatih.SchoolMenuActivity}.
+     * Start an intent to {@link SchoolMenuActivity}.
      *
      * @param school The school data to be passed.
      */

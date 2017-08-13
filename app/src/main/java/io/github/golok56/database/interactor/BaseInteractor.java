@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import io.github.golok56.callback.IOnReadCompleted;
 import io.github.golok56.callback.IOnBasicOperationCompleted;
+import io.github.golok56.callback.base.IBaseOnOperationCompleted;
 import io.github.golok56.database.DBHelper;
 
 
@@ -31,10 +32,10 @@ abstract class BaseInteractor<T> {
     public abstract void getList(String name, IOnReadCompleted<T> callback);
 
     // Clearing the database
-    public abstract void clear(String name);
+    public abstract void clear(String name, IBaseOnOperationCompleted callback);
 
     // Delete a row from database
-    public abstract boolean delete(T obj);
+    public abstract void delete(T obj, IOnBasicOperationCompleted callback);
 
     /**
      * Inserting a new object of T type to database.

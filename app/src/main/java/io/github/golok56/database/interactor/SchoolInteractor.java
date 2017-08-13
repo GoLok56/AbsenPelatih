@@ -48,7 +48,7 @@ public class SchoolInteractor extends BaseInteractor<School> {
                 if (cursor.getCount() != 0) {
                     callback.onSuccess(list);
                 } else {
-                    callback.onFailed();
+                    callback.onFinished();
                 }
             }
         }).start();
@@ -68,7 +68,7 @@ public class SchoolInteractor extends BaseInteractor<School> {
                 if (mDb.insert(DBSchema.School.TABLE_NAME, null, values) != -1) {
                     callBack.onSuccess();
                 } else {
-                    callBack.onFailed();
+                    callBack.onFinished();
                 }
             }
         }).start();
@@ -93,19 +93,24 @@ public class SchoolInteractor extends BaseInteractor<School> {
     }
 
     @Override
-    public boolean delete(School school) {
-        String[] selectionArgs = {String.valueOf(school.getId())};
-        if (mDb.delete(DBSchema.School.TABLE_NAME, "_id=?", selectionArgs) != 0) {
-            String sql = "DROP TABLE IF EXISTS ";
-            String schoolName = school.getSchoolName().replaceAll("\\s", "");
-            String studentTable = DBSchema.Student.TABLE_NAME + schoolName;
-            String attendanceTable = DBSchema.Attendance.TABLE_NAME + schoolName;
+    public void delete(final School school, final IOnBasicOperationCompleted callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String[] selectionArgs = {String.valueOf(school.getId())};
+                if (mDb.delete(DBSchema.School.TABLE_NAME, "_id=?", selectionArgs) != 0) {
+                    String sql = "DROP TABLE IF EXISTS ";
+                    String schoolName = school.getSchoolName().replaceAll("\\s", "");
+                    String studentTable = DBSchema.Student.TABLE_NAME + schoolName;
+                    String attendanceTable = DBSchema.Attendance.TABLE_NAME + schoolName;
 
-            mDb.execSQL(sql + studentTable + ";");
-            mDb.execSQL(sql + attendanceTable + ";");
-
-            return true;
-        }
-        return false;
+                    mDb.execSQL(sql + studentTable + ";");
+                    mDb.execSQL(sql + attendanceTable + ";");
+                    callback.onSuccess();
+                } else {
+                    callback.onFinished();
+                }
+            }
+        }).start();
     }
 }

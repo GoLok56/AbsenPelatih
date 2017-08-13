@@ -19,7 +19,7 @@
         android:textSize="18sp" />
 
     <NumberPicker
-        android:id="@+id/np_dialog_jumlah_murid"
+        android:id="@+id/np_dialog_student_total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />

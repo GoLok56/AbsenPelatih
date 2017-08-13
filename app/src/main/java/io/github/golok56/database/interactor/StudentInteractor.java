@@ -7,8 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 
+import io.github.golok56.callback.IOnBasicOperationCompleted;
+import io.github.golok56.callback.IOnReadCompleted;
 import io.github.golok56.callback.base.IBaseOnOperationCompleted;
 import io.github.golok56.database.DBSchema;
+import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
 import io.github.golok56.utility.ValuesProvider;
 
@@ -34,8 +37,7 @@ public class StudentInteractor extends BaseInteractor<Student> {
     }
 
     @Override
-    // Get the student list from the database
-    public ArrayList<Student> getList(String studentName) {
+    public ArrayList<Student> getList(String studentName, IOnReadCompleted callback) {
         // Setting up the query
         String selection = DBSchema.Student.NAME_COLUMN + " LIKE ?";
         String[] selectionArgs = { studentName + "%" };
@@ -56,12 +58,10 @@ public class StudentInteractor extends BaseInteractor<Student> {
     }
 
     @Override
-    // Insert a new student to database
     public void insert(Student student, IBaseOnOperationCompleted callBack) {
         ContentValues values = ValuesProvider.get(student);
         int id = (int) mDb.insert(mTableName, null, values);
         student.setId(id);
-        return id != -1;
     }
 
     @Override
@@ -70,14 +70,26 @@ public class StudentInteractor extends BaseInteractor<Student> {
     }
 
     @Override
-    // Delete a student from database
-    public boolean delete(Student student) {
+    public void delete(Student student, IOnBasicOperationCompleted callback) {
         String[] selectionArgs = { String.valueOf(student.getId()) };
         if(mDb.delete(mTableName, "_id=?", selectionArgs) != 0){
             new AttendanceInteractor(mDb, mSchoolName).delete(student.getId());
-            return true;
         }
-        return false;
+    }
+
+    public void delete(final School school, final IBaseOnOperationCompleted callback){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0, size = sSelectedStudents.size(); i < size; i++) {
+                    Student current = sSelectedStudents.get(i);
+                    delete(current, null);
+                    school.remove(current);
+                }
+                sSelectedStudents.clear();
+                callback.onFinished();
+            }
+        }).start();
     }
 
     // Retrieving the total attendance of a student with given id from database

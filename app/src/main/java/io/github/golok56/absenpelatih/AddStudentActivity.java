@@ -20,6 +20,7 @@ import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
 import io.github.golok56.utility.Component;
 import io.github.golok56.utility.Vocab;
+import io.github.golok56.view.activity.SchoolMenuActivity;
 
 
 public class AddStudentActivity extends AppCompatActivity {
@@ -109,7 +110,7 @@ public class AddStudentActivity extends AppCompatActivity {
         // Inflate the form
         for(int i = 1; i <= mTotalStudents; i++){
             @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.item_form_murid, null);
-            Component.setText(view, R.id.tv_item_form_heading, "Student ke-" + i);
+            Component.setText(view, R.id.tv_item_form_heading, "Murid ke-" + i);
             RelativeLayout child = (RelativeLayout) view.findViewById(R.id.view_item_form);
             mParentView.addView(child);
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) child.getLayoutParams();
@@ -123,11 +124,10 @@ public class AddStudentActivity extends AppCompatActivity {
     }
 
     // Get the intent and move to this activity
-    static Intent getIntent(Context context, Parcelable school, int value){
+    public static Intent getIntent(Context context, Parcelable school, int value){
         Intent intent = new Intent(context, AddStudentActivity.class);
         intent.putExtra(Vocab.NUMBER_PICKER_VALUE_EXTRA, value);
         intent.putExtra(Vocab.SCHOOL_EXTRA, school);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return intent;
     }
 

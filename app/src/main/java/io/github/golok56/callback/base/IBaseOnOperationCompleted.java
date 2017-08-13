@@ -10,6 +10,6 @@ public interface IBaseOnOperationCompleted {
     /**
      * A callback if the operation is failed.
      */
-    void onFailed();
+    void onFinished();
 
 }

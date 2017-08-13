@@ -23,6 +23,7 @@ import io.github.golok56.database.interactor.StudentInteractor;
 import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
 import io.github.golok56.utility.Vocab;
+import io.github.golok56.view.activity.SchoolMenuActivity;
 
 public class AttendanceCheckActivity extends AppCompatActivity {
 
@@ -111,7 +112,7 @@ public class AttendanceCheckActivity extends AppCompatActivity {
         });
     }
 
-    static Intent getIntent(Context context, Parcelable object) {
+    public static Intent getIntent(Context context, Parcelable object) {
         Intent intent = new Intent(context, AttendanceCheckActivity.class);
         intent.putExtra(Vocab.SCHOOL_EXTRA, object);
         return intent;

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.view.ContextThemeWrapper;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import io.github.golok56.callback.base.IBaseOnOperationCompleted;
 import io.github.golok56.database.DBSchema;
 
 public class AttendanceInteractor extends BaseInteractor<Integer> {
@@ -24,7 +26,7 @@ public class AttendanceInteractor extends BaseInteractor<Integer> {
         mTableName = DBSchema.Attendance.TABLE_NAME + schoolName.replaceAll("\\s", "");
     }
 
-    AttendanceInteractor(SQLiteDatabase db, String schoolName){
+    AttendanceInteractor(SQLiteDatabase db, String schoolName) {
         super(db);
         mTableName = DBSchema.Attendance.TABLE_NAME + schoolName.replaceAll("\\s", "");
     }
@@ -44,19 +46,25 @@ public class AttendanceInteractor extends BaseInteractor<Integer> {
     }
 
     @Override
-    public void clear(String name) {
-        mDb.delete(mTableName, null, null);
+    public void clear(String name, final IBaseOnOperationCompleted callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mDb.delete(mTableName, null, null);
+                callback.onFinished();
+            }
+        }).start();
     }
 
     @Override
     public boolean delete(Integer id) {
-        String[] selectionArgs = { String.valueOf(id) };
+        String[] selectionArgs = {String.valueOf(id)};
         return mDb.delete(mTableName, DBSchema.Attendance.STUDENT_ID_COLUMN + "=?", selectionArgs) != 0;
     }
 
     public String[] getAllAvailableMonth() throws ParseException {
         // Setting up the query
-        String[] column = { DBSchema.Attendance.DATE_COLUMN };
+        String[] column = {DBSchema.Attendance.DATE_COLUMN};
         String groupby = "strftime('%m', " + column[0] + ")";
         // Read database with given query
         Cursor cursor = mDb.query(mTableName, column, null, null, groupby, null, null);
@@ -77,7 +85,7 @@ public class AttendanceInteractor extends BaseInteractor<Integer> {
 
     public HashMap<String, Integer> getDateAndTotalAttendance() throws ParseException {
         // Setting up the query
-        String[] column = { DBSchema.Attendance.DATE_COLUMN, "COUNT(*)" };
+        String[] column = {DBSchema.Attendance.DATE_COLUMN, "COUNT(*)"};
         String groupby = DBSchema.Attendance.DATE_COLUMN;
         // Read database with given query
         Cursor cursor = mDb.query(mTableName, column, null, null, groupby, null, null);
@@ -95,7 +103,7 @@ public class AttendanceInteractor extends BaseInteractor<Integer> {
         return map;
     }
 
-    public String getAttendanceInfo(String date, int studentId){
+    public String getAttendanceInfo(String date, int studentId) {
         // Specifying the format of the date with indonesian format
         Locale id = new Locale("in", "id");
         DateFormat dfFrom = new SimpleDateFormat("dd MMMM yyyy", id);
@@ -107,10 +115,10 @@ public class AttendanceInteractor extends BaseInteractor<Integer> {
             e.printStackTrace();
         }
         // Setting up the query
-        String[] column = { DBSchema.Attendance.STUDENT_ID_COLUMN };
+        String[] column = {DBSchema.Attendance.STUDENT_ID_COLUMN};
         String selection = DBSchema.Attendance.DATE_COLUMN + "=? AND "
                 + DBSchema.Attendance.STUDENT_ID_COLUMN + "=?";
-        String[] selectionArgs = { newDate, "" + studentId };
+        String[] selectionArgs = {newDate, "" + studentId};
         // Reading the database
         Cursor cursor = mDb.query(mTableName, column, selection, selectionArgs, null, null, null);
         // Return the string value based on number of row found

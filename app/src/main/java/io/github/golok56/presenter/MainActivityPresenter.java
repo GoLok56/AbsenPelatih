@@ -41,7 +41,7 @@ public class MainActivityPresenter {
             }
 
             @Override
-            public void onFailed() {
+            public void onFinished() {
                 mView.setSchoolList(null);
             }
         });
@@ -67,7 +67,7 @@ public class MainActivityPresenter {
                 }
 
                 @Override
-                public void onFailed() {
+                public void onFinished() {
                     mView.showToast("Terjadi Kesalahan!");
                 }
             });
@@ -91,7 +91,7 @@ public class MainActivityPresenter {
                 }
 
                 @Override
-                public void onFailed() {}
+                public void onFinished() {}
             });
         }
     }

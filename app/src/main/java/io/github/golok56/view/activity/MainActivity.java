@@ -34,7 +34,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 import io.github.golok56.R;
-import io.github.golok56.absenpelatih.SchoolMenuActivity;
 import io.github.golok56.adapter.SchoolAdapter;
 import io.github.golok56.database.interactor.AttendanceInteractor;
 import io.github.golok56.database.interactor.SchoolInteractor;

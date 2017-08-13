@@ -1,35 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:padding="@dimen/standar">
-
 
     <TextView
         android:id="@+id/tv_item_absen_nama_murid"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_gravity="center_vertical"
-        android:layout_weight="1"
+        android:layout_toLeftOf="@+id/view_item_absen_divider"
+        android:layout_toStartOf="@+id/view_item_absen_divider"
         android:textColor="@android:color/black"
-        android:textSize="20sp"
         android:textStyle="bold"
-        tools:text="Nur Ilahi" />
+        tools:text="Nur Ilahin" />
 
     <View
+        android:id="@+id/view_item_absen_divider"
         android:layout_width="1dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tv_item_absen_nama_murid"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:layout_toLeftOf="@+id/rg_item_absen"
+        android:layout_toStartOf="@+id/rg_item_absen"
         android:background="@color/colorPrimaryDark" />
 
     <RadioGroup
         android:id="@+id/rg_item_absen"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
+        android:layout_alignBottom="@id/tv_item_absen_nama_murid"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <RadioButton
@@ -47,4 +55,4 @@
 
     </RadioGroup>
 
-</LinearLayout>
+</RelativeLayout>

@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="@dimen/standar">
 
-    <TextView
-        android:id="@+id/tv_item_murid_nama_murid"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        tools:text="Nur Ilahi" />
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_item_murid_jumlah_kehadiran_murid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_item_murid_nama_murid"
-        tools:text="Jumlah Kehadiran: 0" />
+        <TextView
+            android:id="@+id/tv_item_murid_nama_murid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="Nur Ilahi " />
+
+        <TextView
+            android:id="@+id/tv_item_murid_jumlah_kehadiran_murid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Jumlah Kehadiran: 0" />
+
+    </LinearLayout>
 
     <View
-        android:id="@+id/view_item_murid_separator"
         android:layout_width="1dp"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/tv_item_murid_nama_murid"
-        android:layout_alignBottom="@id/tv_item_murid_jumlah_kehadiran_murid"
+        android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_toEndOf="@id/tv_item_murid_jumlah_kehadiran_murid"
-        android:layout_toRightOf="@id/tv_item_murid_jumlah_kehadiran_murid"
         android:background="@color/colorPrimaryDark" />
 
     <TextView
         android:id="@+id/tv_item_murid_kelas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:layout_toEndOf="@id/view_item_murid_separator"
-        android:layout_toRightOf="@id/view_item_murid_separator"
-        android:gravity="center_vertical"
+        android:minWidth="120dp"
         android:textColor="@android:color/black"
         android:textSize="16sp"
-        tools:text="Kelas V" />
+        tools:text="Kelas XII MIPA 7" />
 
-</RelativeLayout>
+</LinearLayout>

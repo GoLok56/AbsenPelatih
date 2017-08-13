@@ -2,9 +2,6 @@ package io.github.golok56.utility;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.Toast;
-
-import io.github.golok56.absenpelatih.MainActivity;
 
 /**
  * This class will manage everything preference wise.
