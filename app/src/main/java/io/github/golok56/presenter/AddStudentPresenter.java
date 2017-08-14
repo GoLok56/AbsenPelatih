@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import io.github.golok56.callback.base.IBaseOnOperationCompleted;
 import io.github.golok56.database.interactor.StudentInteractor;
+import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
 import io.github.golok56.view.IAddStudentView;
 
@@ -18,17 +19,17 @@ public class AddStudentPresenter {
 
     private StudentInteractor mStudentInteractor;
 
-    public AddStudentPresenter(IAddStudentView view, StudentInteractor studentInteractor){
+    public AddStudentPresenter(IAddStudentView view, StudentInteractor studentInteractor) {
         mView = view;
         mStudentInteractor = studentInteractor;
     }
 
-    public void onAddStudentClicked(){
-        if(mView.hasEmptyEditText()){
+    public void onAddStudentClicked(School school) {
+        if (mView.hasEmptyEditText()) {
             mView.showToast("Tidak boleh ada field yang kosong!");
         } else {
             final ArrayList<Student> students = mView.getStudents();
-            mStudentInteractor.insert(students, new IBaseOnOperationCompleted() {
+            mStudentInteractor.insert(students, school, new IBaseOnOperationCompleted() {
                 @Override
                 public void onFinished() {
                     mView.showToast("Berhasil menambahkan sejumlah " + students.size() + " murid!");
@@ -38,7 +39,7 @@ public class AddStudentPresenter {
         }
     }
 
-    public void setupForm(){
+    public void setupForm() {
         mView.setupForm();
     }
 

@@ -60,7 +60,7 @@ public class AddStudentActivity extends AppCompatActivity implements IAddStudent
         findViewById(R.id.btn_tambah_murid).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.onAddStudentClicked();
+                mPresenter.onAddStudentClicked(mSchool);
             }
         });
 

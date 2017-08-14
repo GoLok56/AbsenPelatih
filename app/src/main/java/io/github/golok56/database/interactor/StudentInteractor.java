@@ -77,12 +77,15 @@ public class StudentInteractor extends BaseInteractor<Student> {
         student.setId(id);
     }
 
-    public void insert(final ArrayList<Student> students, final IBaseOnOperationCompleted callBack) {
+    public void insert(final ArrayList<Student> students, final School school,
+                       final IBaseOnOperationCompleted callBack) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0, size = students.size(); i < size; i++) {
-                    insert(students.get(i));
+                    Student student = students.get(i);
+                    insert(student);
+                    school.add(student);
                 }
                 callBack.onFinished();
             }
