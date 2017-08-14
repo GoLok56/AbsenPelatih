@@ -19,7 +19,7 @@
         </activity>
         <activity android:name="io.github.golok56.view.activity.SchoolMenuActivity" />
         <activity android:name="io.github.golok56.view.activity.AddStudentActivity" />
-        <activity android:name="io.github.golok56.absenpelatih.AttendanceCheckActivity" />
+        <activity android:name="io.github.golok56.view.activity.AttendanceCheckActivity" />
     </application>
 
 </manifest>

@@ -1,13 +1,11 @@
 package io.github.golok56.database.interactor;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
 import java.util.ArrayList;
 
 import io.github.golok56.callback.IOnReadCompleted;
-import io.github.golok56.callback.IOnBasicOperationCompleted;
 import io.github.golok56.callback.base.IBaseOnOperationCompleted;
 import io.github.golok56.database.DBHelper;
 import io.github.golok56.database.DBSchema;
@@ -37,17 +35,17 @@ public class SchoolInteractor extends BaseInteractor<School> {
                         null
                 );
 
-                ArrayList<School> list = new ArrayList<>(cursor.getCount());
+                ArrayList<School> schools = new ArrayList<>(cursor.getCount());
                 while (cursor.moveToNext()) {
                     int id = cursor.getInt(cursor.getColumnIndex(DBSchema.School._ID));
                     String schoolName = cursor.getString(cursor.getColumnIndex(DBSchema.School.NAME_COLUMN));
                     studentInteractor.setSchoolName(schoolName);
-                    list.add(new School(id, schoolName, studentInteractor.getList("")));
+                    schools.add(new School(id, schoolName, studentInteractor.getStudents("")));
                 }
                 cursor.close();
 
                 if (cursor.getCount() != 0) {
-                    callback.onSuccess(list);
+                    callback.onSuccess(schools);
                 } else {
                     callback.onFinished();
                 }
@@ -57,12 +55,10 @@ public class SchoolInteractor extends BaseInteractor<School> {
 
     @Override
     public void insert(School school) {
-        ContentValues values = ValuesProvider.get(school);
-
         String schoolName = school.getSchoolName();
         DBHelper.createAttendanceTable(mDb, schoolName);
         DBHelper.createStudentTable(mDb, schoolName);
-        mDb.insert(DBSchema.School.TABLE_NAME, null, values);
+        mDb.insert(DBSchema.School.TABLE_NAME, null, ValuesProvider.get(school));
     }
 
     public void insert(final School school, final IBaseOnOperationCompleted callBack) {
@@ -76,41 +72,45 @@ public class SchoolInteractor extends BaseInteractor<School> {
     }
 
     @Override
-    public void clear(String schoolName) {
-        String namaTable = DBSchema.Attendance.TABLE_NAME + schoolName;
+    public void clear(final String name, final IBaseOnOperationCompleted callback) {
+        String namaTable = DBSchema.Attendance.TABLE_NAME + name;
         mDb.delete(namaTable, null, null);
+        callback.onFinished();
     }
 
-    public void clear(final ArrayList<School> schools, final IOnBasicOperationCompleted callback) {
+    public void clear(final ArrayList<School> schools, final IBaseOnOperationCompleted callback) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0, size = schools.size(); i < size; ++i) {
-                    clear(schools.get(i).getSchoolName().replaceAll("\\s", ""));
+                    clear(schools.get(i).getSchoolName().replaceAll("\\s", ""), null);
                 }
-                callback.onSuccess();
+                callback.onFinished();
             }
         }).start();
     }
 
     @Override
-    public void delete(final School school, final IOnBasicOperationCompleted callback) {
+    public void delete(School school) {
+        String[] selectionArgs = {String.valueOf(school.getId())};
+        mDb.delete(DBSchema.School.TABLE_NAME, "_id=?", selectionArgs);
+
+        String sql = "DROP TABLE IF EXISTS ";
+        String schoolName = school.getSchoolName().replaceAll("\\s", "");
+        String studentTable = DBSchema.Student.TABLE_NAME + schoolName;
+        String attendanceTable = DBSchema.Attendance.TABLE_NAME + schoolName;
+
+        mDb.execSQL(sql + studentTable + ";");
+        mDb.execSQL(sql + attendanceTable + ";");
+
+    }
+
+    public void delete(final School school, final IBaseOnOperationCompleted callback) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String[] selectionArgs = {String.valueOf(school.getId())};
-                if (mDb.delete(DBSchema.School.TABLE_NAME, "_id=?", selectionArgs) != 0) {
-                    String sql = "DROP TABLE IF EXISTS ";
-                    String schoolName = school.getSchoolName().replaceAll("\\s", "");
-                    String studentTable = DBSchema.Student.TABLE_NAME + schoolName;
-                    String attendanceTable = DBSchema.Attendance.TABLE_NAME + schoolName;
-
-                    mDb.execSQL(sql + studentTable + ";");
-                    mDb.execSQL(sql + attendanceTable + ";");
-                    callback.onSuccess();
-                } else {
-                    callback.onFinished();
-                }
+                delete(school);
+                callback.onFinished();
             }
         }).start();
     }

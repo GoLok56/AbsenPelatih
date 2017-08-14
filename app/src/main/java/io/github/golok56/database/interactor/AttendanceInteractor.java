@@ -1,20 +1,20 @@
 package io.github.golok56.database.interactor;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.view.ContextThemeWrapper;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import io.github.golok56.callback.IOnReadCompleted;
 import io.github.golok56.callback.base.IBaseOnOperationCompleted;
 import io.github.golok56.database.DBSchema;
+import io.github.golok56.object.Student;
+import io.github.golok56.utility.ValuesProvider;
 
 public class AttendanceInteractor extends BaseInteractor<Integer> {
 
@@ -31,18 +31,30 @@ public class AttendanceInteractor extends BaseInteractor<Integer> {
         mTableName = DBSchema.Attendance.TABLE_NAME + schoolName.replaceAll("\\s", "");
     }
 
-    // This will return null, since Attendance is not a model
     @Override
-    public ArrayList<Integer> getList(String name) {
-        return null;
+    public void getList(String name, IOnReadCompleted<Integer> callback) {
+        // NOT IMPLEMENTED
     }
 
     // Insert a student's attendance to database with give id. Obj here act as an id
     @Override
-    public boolean insert(Integer id) {
-        ContentValues values = new ContentValues();
-        values.put(DBSchema.Attendance.STUDENT_ID_COLUMN, id);
-        return mDb.insert(mTableName, null, values) != -1;
+    public void insert(Integer id) {
+        mDb.insert(mTableName, null, ValuesProvider.get(id));
+    }
+
+    public void insert(final IBaseOnOperationCompleted callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0, size = StudentInteractor.sSelectedStudents.size(); i < size; ++i) {
+                    Student current = StudentInteractor.sSelectedStudents.get(i);
+                    insert(current.getId());
+                    current.incAttendanceTotal();
+                }
+                StudentInteractor.sSelectedStudents.clear();
+                callback.onFinished();
+            }
+        }).start();
     }
 
     @Override
@@ -57,9 +69,9 @@ public class AttendanceInteractor extends BaseInteractor<Integer> {
     }
 
     @Override
-    public boolean delete(Integer id) {
+    public void delete(Integer id) {
         String[] selectionArgs = {String.valueOf(id)};
-        return mDb.delete(mTableName, DBSchema.Attendance.STUDENT_ID_COLUMN + "=?", selectionArgs) != 0;
+        mDb.delete(mTableName, DBSchema.Attendance.STUDENT_ID_COLUMN + "=?", selectionArgs);
     }
 
     public String[] getAllAvailableMonth() throws ParseException {

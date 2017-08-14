@@ -39,4 +39,16 @@ public class ValuesProvider {
         return values;
     }
 
+    /**
+     * This method will provide a {@link ContentValues} for Attendance table in database.
+     *
+     * @param id The id of student that attended.
+     * @return Values for Attendance table.
+     */
+    public static ContentValues get(int id){
+        ContentValues values = new ContentValues();
+        values.put(DBSchema.Attendance.STUDENT_ID_COLUMN, id);
+        return values;
+    }
+
 }

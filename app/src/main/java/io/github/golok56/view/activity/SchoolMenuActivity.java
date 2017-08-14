@@ -40,7 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.github.golok56.R;
-import io.github.golok56.absenpelatih.AttendanceCheckActivity;
 import io.github.golok56.adapter.StudentAdapter;
 import io.github.golok56.database.interactor.AttendanceInteractor;
 import io.github.golok56.database.interactor.SchoolInteractor;

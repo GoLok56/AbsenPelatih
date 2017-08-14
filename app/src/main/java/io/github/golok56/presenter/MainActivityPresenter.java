@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import io.github.golok56.callback.IOnBasicOperationCompleted;
 import io.github.golok56.callback.IOnReadCompleted;
+import io.github.golok56.callback.base.IBaseOnOperationCompleted;
 import io.github.golok56.database.interactor.SchoolInteractor;
 import io.github.golok56.object.School;
 import io.github.golok56.utility.PreferenceManager;
@@ -33,7 +34,7 @@ public class MainActivityPresenter {
         mPref = pref;
     }
 
-    public void getItems(){
+    public void getItems() {
         mSchoolInteractor.getList("", new IOnReadCompleted<School>() {
             @Override
             public void onSuccess(ArrayList<School> list) {
@@ -51,7 +52,7 @@ public class MainActivityPresenter {
         mView.showAddSchoolDialog();
     }
 
-    public void onItemClicked(School school){
+    public void onItemClicked(School school) {
         mView.showSchoolMenu(school);
     }
 
@@ -74,56 +75,52 @@ public class MainActivityPresenter {
         }
     }
 
-    public void onCancelSaveClicked(){
+    public void onCancelSaveClicked() {
         mView.showToast("Penambahan sekolah dibatalkan!");
     }
 
-    public void onItemClearClicked(){
+    public void onItemClearClicked() {
         mView.showClearDialog();
     }
 
-    public void onClearConfirmClicked(ArrayList<School> schools, String pass){
-        if(mPref.checkPassword(pass)){
-            mSchoolInteractor.clear(schools, new IOnBasicOperationCompleted() {
+    public void onClearConfirmClicked(ArrayList<School> schools, String pass) {
+        if (mPref.checkPassword(pass)) {
+            mSchoolInteractor.clear(schools, new IBaseOnOperationCompleted() {
                 @Override
-                public void onSuccess() {
+                public void onFinished() {
                     mView.showToast("Berhasil menghapus semua absen!");
                 }
-
-                @Override
-                public void onFinished() {}
             });
         }
     }
 
-    public void onClearCancelClicked(){
+    public void onClearCancelClicked() {
         mView.showToast("Batal menghapus!");
     }
 
-    public void onChangePassClicked(){
+    public void onChangePassClicked() {
         mView.showChangePasswordDialog();
     }
 
-    public void onChangePassComfirmed(String oldPassword, String newPassword){
-        if (!oldPassword.isEmpty() || !newPassword.isEmpty()){
-            if(mPref.checkPassword(oldPassword)) {
+    public void onChangePassComfirmed(String oldPassword, String newPassword) {
+        if (!oldPassword.isEmpty() || !newPassword.isEmpty()) {
+            if (mPref.checkPassword(oldPassword)) {
                 mPref.changePassword(newPassword);
                 mView.showToast("Password berhasil diubah!");
             } else {
                 mView.showToast("Password lama anda salah!");
             }
-        }
-        else {
-            if(oldPassword.isEmpty()){
+        } else {
+            if (oldPassword.isEmpty()) {
                 mView.showOldPasswordError("Isi password lama anda!");
             }
-            if(newPassword.isEmpty()){
+            if (newPassword.isEmpty()) {
                 mView.showNewPasswordError("Isi password baru anda!");
             }
         }
     }
 
-    public void onChangePassCanceled(){
+    public void onChangePassCanceled() {
         mView.showToast("Batal mengganti password!");
     }
 

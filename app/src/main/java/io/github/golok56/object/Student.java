@@ -74,7 +74,7 @@ public class Student implements Parcelable {
         dest.writeString(mKelas);
     }
 
-    public void addJumlahKehadiran() {
+    public void incAttendanceTotal() {
         mJumlahKehadiran++;
     }
 

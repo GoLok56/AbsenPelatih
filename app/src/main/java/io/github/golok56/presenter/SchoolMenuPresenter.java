@@ -1,6 +1,5 @@
 package io.github.golok56.presenter;
 
-import io.github.golok56.callback.IOnBasicOperationCompleted;
 import io.github.golok56.callback.base.IBaseOnOperationCompleted;
 import io.github.golok56.database.interactor.AttendanceInteractor;
 import io.github.golok56.database.interactor.SchoolInteractor;
@@ -67,15 +66,10 @@ public class SchoolMenuPresenter {
     }
 
     public void onSchoolDeleteConfirmClicked(final School school) {
-        mSchoolInteractor.delete(school, new IOnBasicOperationCompleted() {
-            @Override
-            public void onSuccess() {
-                mView.showToast("Berhasil menghapus " + school.getSchoolName() + "!");
-            }
-
+        mSchoolInteractor.delete(school, new IBaseOnOperationCompleted() {
             @Override
             public void onFinished() {
-                mView.showToast("Ada kesalahan saat menghapus " + school.getSchoolName() + "!");
+                mView.showToast("Berhasil menghapus " + school.getSchoolName() + "!");
             }
         });
     }
