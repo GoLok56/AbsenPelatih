@@ -40,7 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.github.golok56.R;
-import io.github.golok56.absenpelatih.AddStudentActivity;
 import io.github.golok56.absenpelatih.AttendanceCheckActivity;
 import io.github.golok56.adapter.StudentAdapter;
 import io.github.golok56.database.interactor.AttendanceInteractor;
@@ -50,10 +49,11 @@ import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
 import io.github.golok56.presenter.SchoolMenuPresenter;
 import io.github.golok56.utility.PreferenceManager;
-import io.github.golok56.utility.Vocab;
 import io.github.golok56.view.ISchoolMenuView;
 
 public class SchoolMenuActivity extends AppCompatActivity implements ISchoolMenuView {
+
+    public static final String NUMBER_PICKER_VALUE_EXTRA = "NUMBER_PICKER_VALUE_EXTRA";
 
     public enum LayoutActive {STUDENT_LIST, STUDENT_SELECTOR}
 
@@ -90,7 +90,7 @@ public class SchoolMenuActivity extends AppCompatActivity implements ISchoolMenu
 
         mLayout = LayoutActive.STUDENT_LIST;
 
-        mSchool = getIntent().getParcelableExtra(Vocab.SCHOOL_EXTRA);
+        mSchool = getIntent().getParcelableExtra(MainActivity.SCHOOL_EXTRA);
         mSchoolName = mSchool.getSchoolName();
 
         mPresenter = new SchoolMenuPresenter(
@@ -428,7 +428,7 @@ public class SchoolMenuActivity extends AppCompatActivity implements ISchoolMenu
 
     static Intent getIntent(Context context, Parcelable school, boolean finish) {
         Intent intent = new Intent(context, SchoolMenuActivity.class);
-        intent.putExtra(Vocab.SCHOOL_EXTRA, school);
+        intent.putExtra(MainActivity.SCHOOL_EXTRA, school);
         if (finish) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         }
