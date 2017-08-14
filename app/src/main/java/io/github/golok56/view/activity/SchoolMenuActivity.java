@@ -89,7 +89,7 @@ public class SchoolMenuActivity extends AppCompatActivity implements ISchoolMenu
             ab.setTitle(mSchool.getSchoolName());
         }
 
-        mLayout = LayoutActive.STUDENT_LIST;
+        mLayout = LayoutActive.STUDENT_SELECTOR;
 
         mSchoolName = mSchool.getSchoolName();
 
@@ -423,7 +423,12 @@ public class SchoolMenuActivity extends AppCompatActivity implements ISchoolMenu
 
     @Override
     public void showToast(String msg) {
-        Toast.makeText(SchoolMenuActivity.this, msg, Toast.LENGTH_SHORT).show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(SchoolMenuActivity.this, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     static Intent getIntent(Context context, Parcelable school, boolean finish) {

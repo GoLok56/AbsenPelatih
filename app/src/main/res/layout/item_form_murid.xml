@@ -35,7 +35,7 @@
         android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/et_item_form_nama_murid"
+        android:id="@+id/et_item_form_student_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -50,7 +50,7 @@
         android:hint="@string/nama_murid" />
 
     <TextView
-        android:id="@+id/tv_item_form_label_kelas"
+        android:id="@+id/tv_item_form_class_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/et_item_form_student_class"
@@ -61,7 +61,7 @@
         android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/et_item_form_kelas_murid"
+        android:id="@+id/et_item_form_student_class"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/et_item_form_student_name"
@@ -71,8 +71,8 @@
         android:layout_below="@id/et_item_form_student_name"
         android:layout_marginEnd="@dimen/standar"
         android:layout_marginRight="@dimen/standar"
-        android:layout_toEndOf="@id/tv_item_form_label_kelas"
-        android:layout_toRightOf="@id/tv_item_form_label_kelas"
+        android:layout_toEndOf="@id/tv_item_form_class_label"
+        android:layout_toRightOf="@id/tv_item_form_class_label"
         android:hint="@string/kelas_murid" />
 
 </RelativeLayout>

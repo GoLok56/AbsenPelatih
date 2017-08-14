@@ -1,9 +1,7 @@
 package io.github.golok56.view.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -216,19 +214,25 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
     }
 
     @Override
-    public void setSchoolList(ArrayList<School> schoolList) {
-        mSchoolList = schoolList;
-        if (mSchoolList != null) {
-            mLvSchools.setAdapter(new SchoolAdapter(this, mSchoolList));
-            mLvSchools.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    mPresenter.onItemClicked((School) parent.getItemAtPosition(position));
+    public void setSchoolList(final ArrayList<School> schoolList) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mSchoolList = schoolList;
+                if (mSchoolList != null) {
+                    mLvSchools.setAdapter(new SchoolAdapter(MainActivity.this, mSchoolList));
+                    mLvSchools.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            mPresenter.onItemClicked((School) parent.getItemAtPosition(position));
+                        }
+                    });
+                    mLvSchools.setVisibility(View.VISIBLE);
+                    findViewById(R.id.tv_main_menu_school_not_found).setVisibility(View.GONE);
                 }
-            });
-            mLvSchools.setVisibility(View.VISIBLE);
-            findViewById(R.id.tv_main_menu_school_not_found).setVisibility(View.GONE);
-        }
+
+            }
+        });
     }
 
     @Override
@@ -312,6 +316,7 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
                 .create()
                 .show();
     }
+
     @Override
     public void showSchoolNameError(String msg) {
         mEtSchoolName.setError(msg);
@@ -320,12 +325,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
     @Override
     public void showSchoolMenu(School school) {
         startActivity(SchoolMenuActivity.getIntent(this, school, false));
-    }
-
-    static Intent getIntent(Context context) {
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        return intent;
     }
 
 }
