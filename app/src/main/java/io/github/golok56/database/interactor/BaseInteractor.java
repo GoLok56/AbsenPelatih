@@ -43,6 +43,6 @@ abstract class BaseInteractor<T> {
      * @param obj The object to get inserted to database.
      * @param callback Callback after the operation complete.
      */
-    public abstract void insert(T obj, IOnBasicOperationCompleted callback);
+    public abstract void insert(T obj);
 
 }

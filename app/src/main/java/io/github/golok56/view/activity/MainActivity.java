@@ -45,6 +45,8 @@ import io.github.golok56.view.IMainActivityView;
 
 public class MainActivity extends AppCompatActivity implements IMainActivityView {
 
+    public static final String SCHOOL_EXTRA = "SCHOOL_EXTRA";
+
     /**
      * The presenter for this Activity
      */

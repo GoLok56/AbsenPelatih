@@ -58,10 +58,23 @@ public class StudentInteractor extends BaseInteractor<Student> {
     }
 
     @Override
-    public void insert(Student student, IBaseOnOperationCompleted callBack) {
+    private void insert(Student student, IBaseOnOperationCompleted callBack) {
         ContentValues values = ValuesProvider.get(student);
         int id = (int) mDb.insert(mTableName, null, values);
         student.setId(id);
+    }
+
+    public void insert(final ArrayList<Student> students, final IBaseOnOperationCompleted callBack){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0, size = students.size(); i < size; i++) {
+                    Student current = students.get(i);
+                    insert(current, null);
+                }
+                callBack.onFinished();
+            }
+        }).start();
     }
 
     @Override

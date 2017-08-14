@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import io.github.golok56.callback.IOnReadCompleted;
 import io.github.golok56.callback.IOnBasicOperationCompleted;
+import io.github.golok56.callback.base.IBaseOnOperationCompleted;
 import io.github.golok56.database.DBHelper;
 import io.github.golok56.database.DBSchema;
 import io.github.golok56.object.School;
@@ -55,21 +56,21 @@ public class SchoolInteractor extends BaseInteractor<School> {
     }
 
     @Override
-    public void insert(final School school, final IOnBasicOperationCompleted callBack) {
+    public void insert(School school) {
+        ContentValues values = ValuesProvider.get(school);
+
+        String schoolName = school.getSchoolName();
+        DBHelper.createAttendanceTable(mDb, schoolName);
+        DBHelper.createStudentTable(mDb, schoolName);
+        mDb.insert(DBSchema.School.TABLE_NAME, null, values);
+    }
+
+    public void insert(final School school, final IBaseOnOperationCompleted callBack) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                ContentValues values = ValuesProvider.get(school);
-
-                String schoolName = school.getSchoolName();
-                DBHelper.createAttendanceTable(mDb, schoolName);
-                DBHelper.createStudentTable(mDb, schoolName);
-
-                if (mDb.insert(DBSchema.School.TABLE_NAME, null, values) != -1) {
-                    callBack.onSuccess();
-                } else {
-                    callBack.onFinished();
-                }
+                insert(school);
+                callBack.onFinished();
             }
         }).start();
     }

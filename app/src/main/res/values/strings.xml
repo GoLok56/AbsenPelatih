@@ -36,7 +36,8 @@
     <string name="clear">Clear</string>
     <string name="absen">Absen</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="student_form_heading">Murid ke-%1$d</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

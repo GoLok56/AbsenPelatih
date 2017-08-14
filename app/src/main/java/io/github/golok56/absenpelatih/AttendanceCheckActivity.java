@@ -22,7 +22,6 @@ import io.github.golok56.database.interactor.AttendanceInteractor;
 import io.github.golok56.database.interactor.StudentInteractor;
 import io.github.golok56.object.School;
 import io.github.golok56.object.Student;
-import io.github.golok56.utility.Vocab;
 import io.github.golok56.view.activity.SchoolMenuActivity;
 
 public class AttendanceCheckActivity extends AppCompatActivity {
