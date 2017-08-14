@@ -2,7 +2,6 @@ package io.github.golok56.presenter;
 
 import java.util.ArrayList;
 
-import io.github.golok56.callback.IOnBasicOperationCompleted;
 import io.github.golok56.callback.IOnReadCompleted;
 import io.github.golok56.callback.base.IBaseOnOperationCompleted;
 import io.github.golok56.database.interactor.SchoolInteractor;
@@ -60,16 +59,11 @@ public class MainActivityPresenter {
         if (schoolName.isEmpty()) {
             mView.showSchoolNameError("Nama sekolah tidak boleh kosong!");
         } else {
-            mSchoolInteractor.insert(new School(schoolName), new IOnBasicOperationCompleted() {
-                @Override
-                public void onSuccess() {
-                    getItems();
-                    mView.showToast("Berhasil menambahkan " + schoolName);
-                }
-
+            mSchoolInteractor.insert(new School(schoolName), new IBaseOnOperationCompleted() {
                 @Override
                 public void onFinished() {
-                    mView.showToast("Terjadi Kesalahan!");
+                    getItems();
+                    mView.showToast("Berhasil menambahkan " + schoolName);
                 }
             });
         }
