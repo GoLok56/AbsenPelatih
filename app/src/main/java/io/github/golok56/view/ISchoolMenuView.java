@@ -54,4 +54,9 @@ public interface ISchoolMenuView extends IBaseView {
      *
      */
     void showAttendanceCheckActivity();
+
+    /**
+     * Go back to the Main Activity
+     */
+    void showMainActivity();
 }

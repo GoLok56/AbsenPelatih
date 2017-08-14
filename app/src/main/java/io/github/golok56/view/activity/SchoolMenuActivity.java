@@ -228,6 +228,11 @@ public class SchoolMenuActivity extends AppCompatActivity implements ISchoolMenu
     }
 
     @Override
+    public void showMainActivity() {
+        startActivity(MainActivity.getIntent(this));
+    }
+
+    @Override
     public void changeAdapter(LayoutActive layoutActive) {
         switch (layoutActive) {
             case STUDENT_LIST:

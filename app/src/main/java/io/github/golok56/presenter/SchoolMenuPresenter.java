@@ -69,6 +69,7 @@ public class SchoolMenuPresenter {
         mSchoolInteractor.delete(school, new IBaseOnOperationCompleted() {
             @Override
             public void onFinished() {
+                mView.showMainActivity();
                 mView.showToast("Berhasil menghapus " + school.getSchoolName() + "!");
             }
         });
