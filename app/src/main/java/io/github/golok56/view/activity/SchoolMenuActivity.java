@@ -82,6 +82,8 @@ public class SchoolMenuActivity extends AppCompatActivity implements ISchoolMenu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_sekolah);
 
+        mSchool = getIntent().getParcelableExtra(MainActivity.SCHOOL_EXTRA);
+
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setTitle(mSchool.getSchoolName());
@@ -89,7 +91,6 @@ public class SchoolMenuActivity extends AppCompatActivity implements ISchoolMenu
 
         mLayout = LayoutActive.STUDENT_LIST;
 
-        mSchool = getIntent().getParcelableExtra(MainActivity.SCHOOL_EXTRA);
         mSchoolName = mSchool.getSchoolName();
 
         mPresenter = new SchoolMenuPresenter(

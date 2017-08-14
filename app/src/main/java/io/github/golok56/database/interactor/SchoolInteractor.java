@@ -2,6 +2,7 @@ package io.github.golok56.database.interactor;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 
@@ -72,10 +73,9 @@ public class SchoolInteractor extends BaseInteractor<School> {
     }
 
     @Override
-    public void clear(final String name, final IBaseOnOperationCompleted callback) {
+    public void clear(String name, @Nullable IBaseOnOperationCompleted callback) {
         String namaTable = DBSchema.Attendance.TABLE_NAME + name;
         mDb.delete(namaTable, null, null);
-        callback.onFinished();
     }
 
     public void clear(final ArrayList<School> schools, final IBaseOnOperationCompleted callback) {
