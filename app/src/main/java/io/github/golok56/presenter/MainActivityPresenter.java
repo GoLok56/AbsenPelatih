@@ -103,7 +103,7 @@ public class MainActivityPresenter {
     }
 
     public void onChangePassComfirmed(String oldPassword, String newPassword) {
-        if (!oldPassword.isEmpty() || !newPassword.isEmpty()) {
+        if (!oldPassword.isEmpty() && !newPassword.isEmpty()) {
             if (mPref.checkPassword(oldPassword)) {
                 mPref.changePassword(newPassword);
                 mView.showToast("Password berhasil diubah!");
@@ -111,12 +111,7 @@ public class MainActivityPresenter {
                 mView.showToast("Password lama anda salah!");
             }
         } else {
-            if (oldPassword.isEmpty()) {
-                mView.showOldPasswordError("Isi password lama anda!");
-            }
-            if (newPassword.isEmpty()) {
-                mView.showNewPasswordError("Isi password baru anda!");
-            }
+            mView.showToast("Password gagal diubah! Tidak boleh ada form yang kosong!");
         }
     }
 

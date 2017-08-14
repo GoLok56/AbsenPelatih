@@ -318,16 +318,6 @@ public class MainActivity extends AppCompatActivity implements IMainActivityView
     }
 
     @Override
-    public void showOldPasswordError(String msg) {
-        mEtOldPassword.setError(msg);
-    }
-
-    @Override
-    public void showNewPasswordError(String msg) {
-        mEtNewPassword.setError(msg);
-    }
-
-    @Override
     public void showSchoolMenu(School school) {
         startActivity(SchoolMenuActivity.getIntent(this, school, false));
     }

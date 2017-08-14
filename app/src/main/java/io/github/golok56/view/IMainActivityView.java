@@ -36,16 +36,6 @@ public interface IMainActivityView extends IBaseView {
     void showSchoolNameError(String msg);
 
     /**
-     * Showing error if old passwird form is empty.
-     */
-    void showOldPasswordError(String msg);
-
-    /**
-     * Showing error if new passwird form is empty.
-     */
-    void showNewPasswordError(String msg);
-
-    /**
      * Set the list of schools of the view and update the view.
      */
     void setSchoolList(ArrayList<School> schoolList);
