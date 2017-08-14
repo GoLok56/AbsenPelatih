@@ -84,11 +84,11 @@ public class AttendanceCheckActivity extends AppCompatActivity implements IAtten
     }
 
     @Override
-    public void showToast(String msg) {
+    public void showToast(final String msg) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(SchoolMenuActivity.this, msg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(AttendanceCheckActivity.this, msg, Toast.LENGTH_SHORT).show();
             }
         });
     }

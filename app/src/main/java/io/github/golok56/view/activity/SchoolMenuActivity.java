@@ -422,7 +422,7 @@ public class SchoolMenuActivity extends AppCompatActivity implements ISchoolMenu
     }
 
     @Override
-    public void showToast(String msg) {
+    public void showToast(final String msg) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

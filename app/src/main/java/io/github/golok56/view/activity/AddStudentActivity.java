@@ -119,11 +119,11 @@ public class AddStudentActivity extends AppCompatActivity implements IAddStudent
     }
 
     @Override
-    public void showToast(String msg) {
+    public void showToast(final String msg) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(SchoolMenuActivity.this, msg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddStudentActivity.this, msg, Toast.LENGTH_SHORT).show();
             }
         });
     }
